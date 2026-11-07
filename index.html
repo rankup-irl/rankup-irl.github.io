@@ -42,7 +42,7 @@ input{width:100%;font:inherit;font-weight:800;font-size:22px;text-align:center;c
 .btn:active{transform:scale(.96)}
 .red .btn{color:var(--r);background:rgba(255,107,107,.08);border-color:rgba(255,107,107,.55)}
 .btn.big{display:block;width:100%;padding:15px;font-size:16px;letter-spacing:.12em;margin-top:14px;color:#03050b;background:linear-gradient(90deg,var(--a),#a9f8ff);border:0;box-shadow:0 0 16px rgba(111,243,255,.4)}
-.btn.eye{flex-basis:100%;padding:11px 12px;color:#03050b;background:linear-gradient(90deg,var(--a),#a9f8ff);border:0;box-shadow:0 0 12px rgba(111,243,255,.45)}
+.btn.eye{padding:9px 10px;white-space:nowrap;color:#03050b;background:linear-gradient(90deg,var(--a),#a9f8ff);border:0;box-shadow:0 0 12px rgba(111,243,255,.45)}
 .goals{display:grid;gap:10px;margin-top:6px}
 .goal{display:grid;grid-template-columns:52px 1fr;gap:12px;align-items:center;text-align:left;padding:12px;border:1.5px solid rgba(111,243,255,.3);border-radius:12px;cursor:pointer;background:rgba(0,0,0,.25)}
 .goal.on{border-color:var(--a);box-shadow:0 0 14px rgba(111,243,255,.4);background:rgba(111,243,255,.08)}
@@ -63,7 +63,9 @@ input{width:100%;font:inherit;font-weight:800;font-size:22px;text-align:center;c
 .row .v{font-weight:800;color:var(--a);font-size:16px;font-variant-numeric:tabular-nums}
 .red .row .v{color:var(--r)}
 .row.done .n{opacity:.6}.row.done .v{color:var(--ok)}
-.ctr{display:flex;gap:6px;justify-content:flex-end;flex-wrap:wrap;grid-column:1/-1}
+.ctr{display:flex;gap:6px;justify-content:flex-end;flex-wrap:nowrap;grid-column:1/-1}
+.ctr .eye{flex:1}
+.btn.sm{padding:7px 11px;min-width:44px}
 .timer{display:flex;justify-content:space-between;margin-top:10px;font-weight:700;font-size:14px}.timer b{color:var(--a);font-variant-numeric:tabular-nums}
 .warn{text-align:center;color:var(--r);font-weight:800;font-size:13px;letter-spacing:.1em;margin-top:12px;animation:blink 1.1s steps(2) infinite}
 @keyframes blink{50%{opacity:.25}}
@@ -82,6 +84,13 @@ input{width:100%;font:inherit;font-weight:800;font-size:22px;text-align:center;c
 .demo .box{display:none;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:10px}.demo .box.on{display:flex}
 .hide{display:none!important}
 
+/* ---------- timer ---------- */
+#tmr{position:fixed;inset:0;z-index:45;display:none;place-items:center;background:radial-gradient(ellipse at 50% 35%,#12203f,#03050b 70%);padding:24px}
+#tmr.on{display:grid}
+.tin{width:100%;max-width:380px;text-align:center}
+.ring{width:240px;height:240px;margin:18px auto;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--a) var(--p,0%),rgba(111,243,255,.12) 0);box-shadow:0 0 30px rgba(111,243,255,.35)}
+.ring>div{width:204px;height:204px;border-radius:50%;background:#060a14;display:grid;place-content:center}
+.ring b{font-size:84px;font-weight:900;line-height:1;text-shadow:0 0 20px var(--a)}.ring small{font-size:11px;letter-spacing:.3em;color:var(--m);font-weight:800}
 /* ---------- camera mode ---------- */
 #cam{position:fixed;inset:0;z-index:50;background:#03050b;display:none}
 #cam.on{display:block}
@@ -196,6 +205,17 @@ input{width:100%;font:inherit;font-weight:800;font-size:22px;text-align:center;c
   <button class="btn big" id="ovok">CONTINUA</button>
 </div></div>
 
+<!-- TIMER -->
+<div id="tmr">
+  <div class="tin">
+    <div class="tag" style="justify-content:center"><i>!</i>NOTIFICA DEL SISTEMA</div>
+    <div class="title" id="tname">PLANK</div>
+    <div class="ring" id="tring"><div><b id="tsec">30</b><small>SECONDI</small></div></div>
+    <div class="lead" id="tmsg">Preparati…</div>
+    <div style="display:flex;gap:10px"><button class="btn" id="tpause" style="flex:1">❚❚ PAUSA</button><button class="btn" id="tstop" style="flex:1">✕ ESCI</button></div>
+  </div>
+</div>
+
 <!-- CAMERA MODE -->
 <div id="cam" class="mirror">
   <video id="cvid" playsinline muted></video><canvas id="ccv"></canvas><canvas id="cfx"></canvas>
@@ -204,7 +224,7 @@ input{width:100%;font:inherit;font-weight:800;font-size:22px;text-align:center;c
     <div class="cbox"><div class="l" id="cex">SQUAT</div><div class="ccount"><span id="creps">0</span><small> / <span id="ctarget">20</span></small></div></div>
     <div class="cbox"><div class="l">VOTO</div><div class="cgrade" id="cgrade">–</div></div>
   </div>
-  <div id="cdepth" class="cbox"><div class="l">PROFON&shy;DITÀ</div><b id="cdeg">–</b><div class="dbar"><s style="bottom:46%"></s><i id="cdfill"></i></div></div>
+  <div id="cdepth" class="cbox"><div class="l" id="cdlab">PROFON&shy;DITÀ</div><b id="cdeg">–</b><div class="dbar"><s style="bottom:46%"></s><i id="cdfill"></i></div></div>
   <div id="cbig"></div>
   <div class="cbtns"><button class="btn" id="cexit">✕ ESCI</button><button class="btn" id="cflip">⟲ FOTOCAMERA</button><button class="btn" id="cvoice">🔊</button></div>
   <div id="cmsg">IL SISTEMA SI STA ATTIVANDO…</div>
@@ -221,7 +241,8 @@ const GOALS = {
   forza:      { name: "FORZA", ic: "💪", desc: "Mettere massa e diventare più forte", ex: [["push", "Flessioni", 8], ["squat", "Squat", 15], ["lunge", "Affondi", 10], ["plank", "Plank (sec)", 30]] },
   resistenza: { name: "RESISTENZA", ic: "⚡", desc: "Più fiato, più energia, più costanza", ex: [["squat", "Squat", 15], ["burpee", "Burpees", 6], ["jj", "Jumping jack", 25], ["plank", "Plank (sec)", 30]] },
 };
-const AI_EXERCISES = { squat: true };       // exercises the camera can verify (more coming)
+const AI_EXERCISES = { squat: true, jj: true };   // exercises the camera can verify
+const TIME_EXERCISES = { run: true, plank: true };  // exercises measured in seconds
 const PENALTY = [["burpee", "Burpees", 30]];
 const QEXP = 250, AI_BONUS = 50;
 
@@ -250,9 +271,17 @@ function newDay() {
 // ================= RENDER =================
 function rowsHtml(rows, kind) {
   return rows.map((r, i) => {
-    const done = r.done >= r.target, aiOk = AI_EXERCISES[r.id];
-    return `<div class="row${done ? " done" : ""}"><div class="n">${r.name}${r.ai ? `<em>👁 ${r.ai} VERIFICATI</em>` : ""}</div><div class="v">${done ? "✓ " : ""}${r.done} / ${r.target}</div>` +
-      (done ? "" : `<div class="ctr">${aiOk ? `<button class="btn eye" data-k="${kind}" data-i="${i}" data-a="ai">👁 CON IL SISTEMA</button>` : ""}<button class="btn" data-k="${kind}" data-i="${i}" data-a="1">+1</button><button class="btn" data-k="${kind}" data-i="${i}" data-a="5">+5</button><button class="btn" data-k="${kind}" data-i="${i}" data-a="all">FATTO</button></div>`) + `</div>`;
+    const done = r.done >= r.target, aiOk = AI_EXERCISES[r.id], isTime = TIME_EXERCISES[r.id], d = `data-k="${kind}" data-i="${i}"`;
+    const unit = isTime ? " sec" : "", name = r.name.replace(" (sec)", "");
+    let ctr = "";
+    if (!done) {
+      if (aiOk) ctr += `<button class="btn eye" ${d} data-a="ai">👁 CON IL SISTEMA</button>`;
+      if (isTime) ctr += `<button class="btn eye" ${d} data-a="time">▶ AVVIA TIMER</button>`;
+      else ctr += `<button class="btn sm" ${d} data-a="1">+1</button><button class="btn sm" ${d} data-a="5">+5</button>`;
+      ctr += `<button class="btn sm" ${d} data-a="all">✓</button>`;
+    }
+    return `<div class="row${done ? " done" : ""}"><div class="n">${name}${r.ai ? `<em>👁 ${r.ai}</em>` : ""}</div><div class="v">${done ? "✓ " : ""}${r.done} / ${r.target}${unit}</div>` +
+      (ctr ? `<div class="ctr">${ctr}</div>` : "") + `</div>`;
   }).join("");
 }
 function render() {
@@ -308,6 +337,7 @@ document.addEventListener("click", e => {
   const b = e.target.closest("button[data-k]"); if (!b) return;
   const kind = b.dataset.k, rows = kind === "p" ? S.penalty : S.quest, r = rows[+b.dataset.i];
   if (b.dataset.a === "ai") { openCamera(r, kind); return; }
+  if (b.dataset.a === "time") { openTimer(r, kind); return; }
   r.done = b.dataset.a === "all" ? r.target : Math.min(r.target, r.done + (+b.dataset.a));
   store.set(S); if (!checkDone(kind)) render();
 });
@@ -340,6 +370,30 @@ function tick() {
 }
 if (S) newDay(); render(); tick(); setInterval(tick, 1000);
 if ("serviceWorker" in navigator && location.protocol === "https:") navigator.serviceWorker.register("sw.js").catch(() => {});
+
+// ================= TIMER (exercises in seconds) =================
+let tRow = null, tKind = null, tLeft = 0, tTotal = 0, tInt = null, tPaused = false, tPhase = "cd", tCd = 3;
+function openTimer(row, kind) {
+  initAudio(); tRow = row; tKind = kind; tTotal = row.target - row.done; tLeft = tTotal; tPaused = false; tPhase = "cd"; tCd = 3;
+  $("tname").textContent = row.name.replace(" (sec)", "").toUpperCase(); $("tsec").textContent = tCd; $("tring").style.setProperty("--p", "0%");
+  $("tmsg").textContent = "Preparati…"; $("tpause").textContent = "❚❚ PAUSA"; $("tmr").classList.add("on");
+  speak("Preparati. " + numIt(3)); sfx.tick();
+  clearInterval(tInt); tInt = setInterval(tTick, 1000);
+}
+function tTick() {
+  if (tPaused) return;
+  if (tPhase === "cd") {
+    tCd--; if (tCd > 0) { $("tsec").textContent = tCd; sfx.tick(); speak(numIt(tCd)); return; }
+    tPhase = "run"; $("tsec").textContent = tLeft; $("tmsg").textContent = "Il Sistema sta contando. Non fermarti."; sfx.go(); speak("Via!"); return;
+  }
+  tLeft--; $("tsec").textContent = Math.max(0, tLeft); $("tring").style.setProperty("--p", ((tTotal - tLeft) / tTotal * 100) + "%");
+  const doneSec = tTotal - tLeft; tRow.done = Math.min(tRow.target, tRow.target - tTotal + doneSec);
+  if (tLeft === 10 && tTotal > 15) speak("Dieci secondi."); if (tLeft <= 3 && tLeft > 0) { sfx.tick(); speak(numIt(tLeft)); }
+  if (tLeft <= 0) { clearInterval(tInt); sfx.win(); speak("Completato."); tRow.done = tRow.target; store.set(S);
+    setTimeout(() => { $("tmr").classList.remove("on"); render(); checkDone(tKind); }, 900); }
+}
+$("tpause").onclick = () => { tPaused = !tPaused; $("tpause").textContent = tPaused ? "▶ RIPRENDI" : "❚❚ PAUSA"; $("tmsg").textContent = tPaused ? "In pausa." : "Il Sistema sta contando. Non fermarti."; };
+$("tstop").onclick = () => { clearInterval(tInt); try { speechSynthesis.cancel(); } catch (e) {} store.set(S); $("tmr").classList.remove("on"); render(); checkDone(tKind); };
 
 // ================= CAMERA MODE (AI counter) =================
 const VER = "0.10.14";
@@ -397,8 +451,10 @@ function closeCam() {
 let phase = "scan", scanSince = 0, cdStart = 0, cdLast = -1, state = "up", maxDepth = 0, hipBase = null, thighLen = null, smooth = null, leanWarn = false;
 let reps = 0, attempts = 0, gradesSum = 0, perfect = 0;
 
+let camEx = "squat", jjState = "closed", jjMaxLeg = 0, jjArmsHigh = false;
 async function openCamera(row, kind) {
-  camRow = row; camKind = kind; target = row.target - row.done;
+  camRow = row; camKind = kind; target = row.target - row.done; camEx = row.id; jjState = "closed";
+  $("cdlab").innerHTML = camEx === "jj" ? "APER&shy;TURA" : "PROFON&shy;DITÀ";
   initAudio(); speak("Sistema attivato.");
   cam.classList.add("on"); say("IL SISTEMA SI STA ATTIVANDO…");
   $("cex").textContent = row.name.toUpperCase(); $("ctarget").textContent = target;
@@ -438,7 +494,7 @@ function loop() {
   if (video.readyState >= 2 && now !== lastTs && landmarker) { lastTs = now; const res = landmarker.detectForVideo(video, now); const lm = res.landmarks && res.landmarks[0]; ctx.clearRect(0, 0, cv.width, cv.height); step(lm, now); }
   drawFx(); requestAnimationFrame(loop);
 }
-const bodyOk = lm => !!lm && [0, 23, 24, 25, 26].every(i => lm[i].visibility > .5);
+const bodyOk = lm => !!lm && (camEx === "jj" ? [0, 11, 12, 15, 16, 27, 28] : [0, 23, 24, 25, 26]).every(i => lm[i].visibility > .5);
 function calibrate(lm) { const hipY = (lm[23].y + lm[24].y) / 2, kneeY = (lm[25].y + lm[26].y) / 2, th = Math.max(1e-3, kneeY - hipY);
   hipBase = hipBase == null ? hipY : (hipY < hipBase ? hipY : hipBase * .97 + hipY * .03); thighLen = thighLen == null ? th : Math.max(thighLen * .995, th); }
 function step(lm, now) {
@@ -447,7 +503,7 @@ function step(lm, now) {
     if (ok) { if (!scanSince) scanSince = now; calibrate(lm); } else { scanSince = 0; hipBase = null; thighLen = null; }
     const prog = scanSince ? Math.min(1, (now - scanSince) / 1500) : 0; drawSilhouette(prog, now);
     if (ok && Math.random() < .08) sfx.scan();
-    if (!ok && now - lastMsgT > 1200) say(lm ? "ALLONTANATI: DEVO VEDERTI DALLA TESTA ALLE GINOCCHIA" : "ENTRA NELLA SAGOMA", "bad");
+    if (!ok && now - lastMsgT > 1200) say(lm ? (camEx === "jj" ? "ALLONTANATI: DEVO VEDERTI DALLA TESTA AI PIEDI" : "ALLONTANATI: DEVO VEDERTI DALLA TESTA ALLE GINOCCHIA") : "ENTRA NELLA SAGOMA", "bad");
     if (ok && prog < 1 && now - lastMsgT > 700) say("SCANSIONE IN CORSO… RESTA FERMO");
     if (prog >= 1) { phase = "countdown"; cdStart = now; cdLast = -1; say("GIOCATORE RILEVATO", "good"); speak("Giocatore rilevato. Preparati."); flash(); }
     return;
@@ -456,10 +512,10 @@ function step(lm, now) {
     if (lm) drawSkeleton(lm, "#7dffa8"); if (bodyOk(lm)) calibrate(lm);
     const el = (now - cdStart) / 1000 - 1.3, n = 3 - Math.floor(el);
     if (el >= 0 && n !== cdLast && n >= 1) { cdLast = n; big(String(n)); sfx.tick(); speak(numIt(n)); }
-    if (el >= 3) { phase = "active"; big("VIA!", "#7dffa8"); sfx.go(); speak("Via!"); say("INIZIA LO SQUAT", "good"); }
+    if (el >= 3) { phase = "active"; big("VIA!", "#7dffa8"); sfx.go(); speak("Via!"); say(camEx === "jj" ? "INIZIA I JUMPING JACK" : "INIZIA LO SQUAT", "good"); }
     return;
   }
-  if (phase === "active") active(lm, now);
+  if (phase === "active") (camEx === "jj" ? activeJJ : active)(lm, now);
 }
 function grade(letter, color) { const g = $("cgrade"); g.textContent = letter; g.style.color = color; g.style.textShadow = `0 0 18px ${color}`; g.animate([{ transform: "scale(1.7)" }, { transform: "scale(1)" }], { duration: 300 }); }
 function active(lm, now) {
@@ -485,6 +541,31 @@ function active(lm, now) {
   else { sfx.rep(); burst(g[2], 25); say(g[1] === "A" ? "RIPETIZIONE VALIDA" : "VALIDA, MA PUOI SCENDERE DI PIÙ", "good"); speak(numIt(reps)); }
   if (navigator.vibrate) navigator.vibrate(40);
   if (target > 6 && reps === target - 5) setTimeout(() => speak("Ne mancano cinque.", false), 700);
+  if (reps >= target) finishCam();
+}
+function activeJJ(lm, now) {
+  if (!bodyOk(lm)) { if (lm) drawSkeleton(lm); if (now - lastMsgT > 1000) say("ALLONTANATI: DEVO VEDERTI DALLA TESTA AI PIEDI", "bad"); return; }
+  const shW = Math.max(1e-3, Math.abs(lm[11].x - lm[12].x)), leg = Math.abs(lm[27].x - lm[28].x) / shW;
+  const shY = (lm[11].y + lm[12].y) / 2, wristUp = lm[15].y < shY && lm[16].y < shY, wristHigh = lm[15].y < lm[0].y && lm[16].y < lm[0].y;
+  const wristDown = lm[15].y > shY && lm[16].y > shY;
+  const pct = Math.round(Math.min(1, leg / 2) * 100); $("cdeg").textContent = pct + "%"; $("cdfill").style.height = pct + "%";
+  drawSkeleton(lm, wristHigh && leg > 1.6 ? "#7dffa8" : "#6ff3ff");
+  if (jjState === "closed") {
+    if (leg > 1.4 && wristUp) { jjState = "open"; jjMaxLeg = leg; jjArmsHigh = wristHigh; }
+    else if (now - lastMsgT > 2000) say(reps === 0 ? "INIZIA I JUMPING JACK" : "CONTINUA, GIOCATORE");
+    return;
+  }
+  jjMaxLeg = Math.max(jjMaxLeg, leg); jjArmsHigh = jjArmsHigh || wristHigh;
+  if (!(leg < 1.15 && wristDown)) return;
+  jjState = "closed"; attempts++;
+  if (!jjArmsHigh) { grade("E", "#ff5a6e"); say("NON VALIDA: BRACCIA SOPRA LA TESTA", "bad"); sfx.bad(); speak("Non valida. Braccia sopra la testa."); return; }
+  if (jjMaxLeg < 1.6) { grade("E", "#ff5a6e"); say("NON VALIDA: APRI DI PIÙ LE GAMBE", "bad"); sfx.bad(); speak("Apri di più le gambe."); return; }
+  const g = jjMaxLeg >= 2.0 ? ["S", "#ffe27a", 100] : ["A", "#7dffa8", 85];
+  reps++; gradesSum += g[2]; grade(g[0], g[1]); $("creps").textContent = reps;
+  if (g[0] === "S") { perfect++; sfx.perfect(); burst("#ffe27a", 40); say("RIPETIZIONE PERFETTA", "good"); }
+  else { sfx.rep(); burst(g[1], 18); say("RIPETIZIONE VALIDA", "good"); }
+  if (reps % 5 === 0 || target - reps <= 3) speak(numIt(reps));       // JJ are fast: speak every 5 and the last ones
+  if (navigator.vibrate) navigator.vibrate(30);
   if (reps >= target) finishCam();
 }
 function saveCam() {
