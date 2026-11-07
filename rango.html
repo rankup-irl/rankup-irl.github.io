@@ -1,0 +1,294 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Scopri il tuo rango · RANKUP</title>
+<meta name="description" content="30 secondi di squat davanti alla fotocamera. Il Sistema conta e ti assegna il tuo rango.">
+<meta name="theme-color" content="#070d1c">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@500;700;900&display=swap">
+<style>
+  :root { --bg:#070d1c; --panel:#0c1630; --line:#6ff3ff; --fg:#ffffff; --muted:#9fb0d6; --red:#ff6b6b; --gold:#ffe27a; color-scheme: dark; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; }
+  body { background: var(--bg); color: var(--fg); font-family: Inter, system-ui, sans-serif; -webkit-font-smoothing: antialiased;
+    background-image: linear-gradient(rgba(111,243,255,.06) 1px, transparent 1px), linear-gradient(90deg, rgba(111,243,255,.06) 1px, transparent 1px); background-size: 44px 44px; }
+  .app { max-width: 520px; margin: 0 auto; min-height: 100%; padding: max(18px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(24px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left)); display: flex; flex-direction: column; gap: 16px; }
+  .win { position: relative; border: 2px solid var(--line); background: rgba(12,22,48,.88); padding: 18px; box-shadow: 0 0 24px rgba(111,243,255,.18), inset 0 0 18px rgba(111,243,255,.06); }
+  .win::before, .win::after { content: ""; position: absolute; width: 22px; height: 22px; border: 4px solid var(--line); }
+  .win::before { top: -9px; left: -9px; border-right: 0; border-bottom: 0; } .win::after { bottom: -9px; right: -9px; border-left: 0; border-top: 0; }
+  .win.red { border-color: var(--red); } .win.red::before, .win.red::after { border-color: var(--red); }
+  .win.gold { border-color: var(--gold); box-shadow: 0 0 30px rgba(255,226,122,.25); } .win.gold::before, .win.gold::after { border-color: var(--gold); }
+  .hdr { display: flex; align-items: center; gap: 10px; font-weight: 700; letter-spacing: .14em; font-size: 12px; color: var(--line); text-transform: uppercase; border-bottom: 1px solid rgba(111,243,255,.35); padding-bottom: 10px; margin-bottom: 14px; }
+  .hdr b { display: inline-grid; place-items: center; width: 20px; height: 20px; border: 2px solid currentColor; font-size: 12px; }
+  .gold .hdr { color: var(--gold); border-color: rgba(255,226,122,.4); } .red .hdr { color: var(--red); border-color: rgba(255,107,107,.4); }
+  h1 { font-weight: 900; font-size: clamp(34px, 10vw, 52px); line-height: .98; margin: 6px 0 0; letter-spacing: -.02em; text-transform: uppercase; }
+  p { margin: 0; color: var(--muted); line-height: 1.5; font-size: 16px; }
+  ul.rules { margin: 0; padding: 0; list-style: none; display: grid; gap: 8px; font-weight: 700; }
+  ul.rules li::before { content: "› "; color: var(--line); }
+  .btn { appearance: none; border: 0; width: 100%; padding: 17px 18px; font: 900 18px Inter, sans-serif; letter-spacing: .08em; text-transform: uppercase; cursor: pointer; background: var(--line); color: #04101f; }
+  .btn.ghost { background: transparent; color: var(--line); border: 2px solid var(--line); font-size: 15px; padding: 13px; }
+  .btn.gold { background: var(--gold); }
+  .btn:focus-visible, input:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
+  .btn:disabled { opacity: .5; }
+  .row { display: grid; gap: 10px; }
+  .small { font-size: 13px; color: var(--muted); }
+  .stage { position: relative; width: 100%; aspect-ratio: 3/4; background: #02060f; border: 2px solid var(--line); overflow: hidden; }
+  .stage video, .stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
+  .hud { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: space-between; padding: 12px; pointer-events: none; }
+  .hud .top { display: flex; justify-content: space-between; font-weight: 700; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; }
+  .pill { background: rgba(7,13,28,.8); border: 1px solid var(--line); padding: 6px 10px; }
+  .pill.ok { border-color: #7be0a5; color: #7be0a5; } .pill.no { border-color: var(--red); color: var(--red); }
+  .big { text-align: center; font-weight: 900; font-size: clamp(80px, 30vw, 150px); line-height: 1; text-shadow: 0 0 30px rgba(111,243,255,.6); font-variant-numeric: tabular-nums; }
+  .bar { height: 10px; background: rgba(255,255,255,.12); } .bar i { display: block; height: 100%; width: 100%; background: var(--line); transition: width .25s linear; }
+  .bar.low i { background: var(--red); }
+  .tap { position: absolute; inset: 0; display: none; pointer-events: auto; background: transparent; border: 0; color: transparent; }
+  .manual .tap { display: block; }
+  .rank { display: grid; place-items: center; gap: 6px; text-align: center; padding: 6px 0; }
+  .rank .letter { font-weight: 900; font-size: 120px; line-height: 1; color: var(--gold); text-shadow: 0 0 34px rgba(255,226,122,.55); }
+  .rank .title { font-weight: 900; font-size: 24px; text-transform: uppercase; }
+  .stats { display: flex; justify-content: center; gap: 22px; font-weight: 700; color: var(--muted); }
+  .stats b { color: var(--fg); font-size: 22px; display: block; text-align: center; }
+  input[type=email] { width: 100%; padding: 15px 14px; font: 600 16px Inter, sans-serif; color: var(--fg); background: #02060f; border: 2px solid var(--line); }
+  .msg { font-weight: 700; } .msg.ok { color: #7be0a5; } .msg.err { color: var(--red); }
+  [hidden] { display: none !important; }
+  .foot { text-align: center; font-size: 12px; color: var(--muted); margin-top: auto; }
+  .foot a { color: var(--line); }
+  @media (prefers-reduced-motion: no-preference) { .pop { animation: pop .5s cubic-bezier(.2,1.4,.4,1); } @keyframes pop { from { transform: scale(.6); opacity: 0; } to { transform: none; opacity: 1; } } }
+</style>
+</head>
+<body>
+<main class="app">
+
+  <!-- 1. INTRO -->
+  <section id="s-intro" class="row">
+    <div class="win">
+      <div class="hdr"><b>!</b> Notifica del Sistema</div>
+      <p id="challengeLine" class="small" hidden></p>
+      <h1>Scopri il tuo rango</h1>
+      <p style="margin-top:12px">30 secondi di squat davanti alla fotocamera. Il Sistema conta ogni ripetizione e decide chi sei: rango E, D, C, B, A o S.</p>
+    </div>
+    <div class="win">
+      <div class="hdr"><b>i</b> Preparazione</div>
+      <ul class="rules">
+        <li>Appoggia il telefono a terra, in verticale</li>
+        <li>Allontanati di 2 metri: si deve vedere tutto il corpo</li>
+        <li>Scendi finché le cosce sono quasi parallele al pavimento</li>
+        <li>Se senti dolore, fermati</li>
+      </ul>
+      <p class="small" style="margin-top:12px">Il video resta sul tuo telefono: nessuna immagine viene salvata o inviata.</p>
+    </div>
+    <button class="btn" id="btnStart" type="button">Accetto la missione</button>
+    <button class="btn ghost" id="btnManual" type="button">Niente fotocamera: conto da solo</button>
+  </section>
+
+  <!-- 2. CAMERA / TEST -->
+  <section id="s-test" class="row" hidden>
+    <div class="stage" id="stage">
+      <video id="video" playsinline muted></video>
+      <canvas id="overlay"></canvas>
+      <div class="hud">
+        <div class="top"><span class="pill" id="bodyPill">Cerco il corpo…</span><span class="pill" id="timePill">30 s</span></div>
+        <div class="big" id="count">0</div>
+        <div class="bar" id="bar"><i id="barFill"></i></div>
+      </div>
+      <button class="tap" id="tap" type="button" aria-label="Tocca a ogni squat">+1</button>
+    </div>
+    <p class="small" id="testHint">Quando il Sistema vede tutto il corpo, parte il conto alla rovescia.</p>
+    <button class="btn" id="btnGo" type="button" hidden>Via!</button>
+    <button class="btn ghost" id="btnBack" type="button">Annulla</button>
+  </section>
+
+  <!-- 3. RESULT -->
+  <section id="s-result" class="row" hidden>
+    <div class="win gold pop">
+      <div class="hdr"><b>★</b> Valutazione completata</div>
+      <div class="rank">
+        <div class="small">IL TUO RANGO È</div>
+        <div class="letter" id="rLetter">E</div>
+        <div class="title" id="rTitle">Il divano umano</div>
+        <div class="stats"><div><b id="rReps">0</b>squat</div><div><b>30 s</b>tempo</div><div><b id="rNext">10</b>al prossimo rango</div></div>
+      </div>
+    </div>
+    <div class="win">
+      <div class="hdr"><b>!</b> Missione speciale</div>
+      <p style="color:var(--fg);font-weight:700">L'app completa arriva a dicembre: una missione al giorno, ranghi, penalità e boss della domenica.</p>
+      <p style="margin-top:8px">Entra tra i primi 300 cacciatori: ti avvisiamo noi, nient'altro.</p>
+      <div class="row" style="margin-top:14px">
+        <label class="small" for="email">La tua email</label>
+        <input id="email" type="email" inputmode="email" autocomplete="email" placeholder="nome@email.com">
+        <button class="btn gold" id="btnJoin" type="button">Entro nella lista</button>
+        <p class="msg" id="joinMsg" role="status"></p>
+      </div>
+    </div>
+    <button class="btn" id="btnShare" type="button">Sfida un amico</button>
+    <button class="btn ghost" id="btnCard" type="button">Salva la scheda del rango</button>
+    <button class="btn ghost" id="btnAgain" type="button">Riprova</button>
+  </section>
+
+  <div class="foot">RANKUP · <a href="https://www.tiktok.com/@rankup.irl" target="_blank" rel="noopener">@rankup.irl</a></div>
+</main>
+
+<script type="module">
+  const SECONDS = 30;
+  const WAITLIST_ENDPOINT = 'https://formsubmit.co/ajax/rankupdaily.irl@gmail.com';
+  const RANKS = [
+    { min: 30, l: 'S', t: 'Leggenda del Sistema' },
+    { min: 25, l: 'A', t: "L'inarrestabile" },
+    { min: 20, l: 'B', t: 'Il cacciatore di EXP' },
+    { min: 15, l: 'C', t: 'Lo sfidante' },
+    { min: 10, l: 'D', t: 'Il pigro risvegliato' },
+    { min: 0, l: 'E', t: 'Il divano umano' },
+  ];
+  const $ = (id) => document.getElementById(id);
+  const show = (id) => ['s-intro', 's-test', 's-result'].forEach((s) => { $(s).hidden = s !== id; window.scrollTo(0, 0); });
+
+  // challenge link: ?sfida=18
+  const challenge = Number(new URLSearchParams(location.search).get('sfida'));
+  if (challenge > 0 && challenge < 200) { const c = $('challengeLine'); c.hidden = false; c.textContent = `Un amico ti sfida: ha fatto ${challenge} squat in 30 secondi. Battilo.`; c.style.color = 'var(--gold)'; c.style.fontWeight = '700'; }
+
+  // ---------- audio ----------
+  let ac = null;
+  const beep = (f = 1200, d = .08, v = .15) => { try { ac = ac || new (window.AudioContext || window.webkitAudioContext)(); const o = ac.createOscillator(), g = ac.createGain(); o.frequency.value = f; g.gain.value = v; o.connect(g).connect(ac.destination); o.start(); g.gain.exponentialRampToValueAtTime(.0001, ac.currentTime + d); o.stop(ac.currentTime + d); } catch (_) {} };
+  const buzz = (ms) => { try { navigator.vibrate && navigator.vibrate(ms); } catch (_) {} };
+
+  // ---------- state ----------
+  let stream = null, landmarker = null, raf = 0, manual = false, running = false, reps = 0, endAt = 0, phase = 'up', ema = null, seenSince = 0, countdownStarted = false;
+  const video = $('video'), cv = $('overlay'), ctx = cv.getContext('2d');
+
+  function setCount(n) { $('count').textContent = n; }
+  function resetTest() { reps = 0; phase = 'up'; ema = null; running = false; countdownStarted = false; seenSince = 0; setCount(0); $('timePill').textContent = SECONDS + ' s'; $('barFill').style.width = '100%'; $('bar').classList.remove('low'); }
+
+  async function startCamera() {
+    show('s-test'); resetTest(); manual = false; $('stage').classList.remove('manual'); $('btnGo').hidden = true;
+    $('bodyPill').textContent = 'Carico il Sistema…'; $('bodyPill').className = 'pill';
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user', width: { ideal: 720 }, height: { ideal: 960 } }, audio: false });
+      video.srcObject = stream; await video.play();
+    } catch (e) { $('testHint').textContent = 'Fotocamera non disponibile o permesso negato. Puoi contare da solo.'; return goManual(); }
+    try {
+      const vision = await import('https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14');
+      const files = await vision.FilesetResolver.forVisionTasks('https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm');
+      landmarker = await vision.PoseLandmarker.createFromOptions(files, { baseOptions: { modelAssetPath: 'https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_lite/float16/1/pose_landmarker_lite.task', delegate: 'GPU' }, runningMode: 'VIDEO', numPoses: 1 });
+    } catch (e) { $('testHint').textContent = 'Il contatore automatico non si è caricato su questo telefono. Puoi contare da solo toccando lo schermo.'; return goManual(true); }
+    $('testHint').textContent = 'Mettiti a 2 metri: quando il Sistema vede tutto il corpo parte il conto alla rovescia.';
+    loop();
+  }
+
+  function goManual(keepVideo) {
+    show('s-test'); manual = true; $('stage').classList.add('manual');
+    if (!keepVideo) { stopCamera(); }
+    $('bodyPill').textContent = 'Modalità manuale'; $('bodyPill').className = 'pill';
+    $('testHint').textContent = 'Tocca lo schermo a ogni squat completo. Onestà da cacciatore.';
+    $('btnGo').hidden = false;
+  }
+
+  const angle = (a, b, c) => { const ab = Math.atan2(a.y - b.y, a.x - b.x), cb = Math.atan2(c.y - b.y, c.x - b.x); let d = Math.abs((ab - cb) * 180 / Math.PI); return d > 180 ? 360 - d : d; };
+  const BONES = [[11, 12], [11, 23], [12, 24], [23, 24], [23, 25], [25, 27], [24, 26], [26, 28], [11, 13], [13, 15], [12, 14], [14, 16]];
+
+  function loop() {
+    raf = requestAnimationFrame(loop);
+    if (!landmarker || video.readyState < 2) return;
+    if (cv.width !== video.videoWidth) { cv.width = video.videoWidth; cv.height = video.videoHeight; }
+    const res = landmarker.detectForVideo(video, performance.now());
+    ctx.clearRect(0, 0, cv.width, cv.height);
+    const lm = res.landmarks && res.landmarks[0];
+    const full = lm && [23, 24, 25, 26, 27, 28].every((i) => (lm[i].visibility ?? 1) > .5 && lm[i].y < 1.02);
+    if (lm) {
+      ctx.strokeStyle = '#6ff3ff'; ctx.lineWidth = 5; ctx.shadowColor = '#6ff3ff'; ctx.shadowBlur = 12;
+      BONES.forEach(([a, b]) => { ctx.beginPath(); ctx.moveTo(lm[a].x * cv.width, lm[a].y * cv.height); ctx.lineTo(lm[b].x * cv.width, lm[b].y * cv.height); ctx.stroke(); });
+      ctx.shadowBlur = 0;
+    }
+    $('bodyPill').textContent = full ? 'Corpo rilevato ✓' : 'Allontanati: non vedo le gambe';
+    $('bodyPill').className = 'pill ' + (full ? 'ok' : 'no');
+    if (!running && !countdownStarted) {
+      if (full) { seenSince = seenSince || performance.now(); if (performance.now() - seenSince > 1200) countdown(); }
+      else seenSince = 0;
+    }
+    if (running && full) {
+      const l = angle(lm[23], lm[25], lm[27]), r = angle(lm[24], lm[26], lm[28]);
+      const a = (l + r) / 2; ema = ema == null ? a : ema * .6 + a * .4;
+      if (phase === 'up' && ema < 110) { phase = 'down'; beep(500, .05, .08); }
+      else if (phase === 'down' && ema > 155) { phase = 'up'; addRep(); }
+    }
+  }
+
+  function addRep() { if (!running) return; reps++; setCount(reps); beep(1400, .09, .18); buzz(30); }
+  $('tap').addEventListener('click', () => addRep());
+
+  function countdown() {
+    countdownStarted = true; let n = 3; setCount(n); beep(700, .12);
+    const iv = setInterval(() => { n--; if (n > 0) { setCount(n); beep(700, .12); } else { clearInterval(iv); setCount(0); beep(1600, .25, .2); startTimer(); } }, 1000);
+  }
+  function startTimer() {
+    running = true; endAt = performance.now() + SECONDS * 1000;
+    const tick = () => {
+      const left = Math.max(0, endAt - performance.now()); const s = Math.ceil(left / 1000);
+      $('timePill').textContent = s + ' s'; $('barFill').style.width = (left / (SECONDS * 1000) * 100) + '%'; $('bar').classList.toggle('low', s <= 5);
+      if (left <= 0) return finish();
+      if (s <= 3 && s !== tick.last) { tick.last = s; beep(900, .06); }
+      requestAnimationFrame(tick);
+    }; tick();
+  }
+
+  function stopCamera() { cancelAnimationFrame(raf); if (stream) { stream.getTracks().forEach((t) => t.stop()); stream = null; } video.srcObject = null; }
+
+  function rankFor(n) { return RANKS.find((r) => n >= r.min); }
+  function finish() {
+    running = false; stopCamera(); beep(880, .15); setTimeout(() => beep(1320, .3), 160); buzz([60, 40, 120]);
+    const r = rankFor(reps); const idx = RANKS.indexOf(r); const next = idx > 0 ? RANKS[idx - 1].min - reps : 0;
+    $('rLetter').textContent = r.l; $('rTitle').textContent = r.t; $('rReps').textContent = reps; $('rNext').textContent = next > 0 ? next : '—';
+    show('s-result');
+    try { localStorage.setItem('rankup-rango', JSON.stringify({ reps, rango: r.l, at: Date.now() })); } catch (_) {}
+  }
+
+  // ---------- waitlist ----------
+  $('btnJoin').addEventListener('click', async () => {
+    const email = $('email').value.trim(); const msg = $('joinMsg');
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { msg.className = 'msg err'; msg.textContent = 'Controlla l\'email: sembra incompleta.'; return; }
+    $('btnJoin').disabled = true; msg.className = 'msg'; msg.textContent = 'Invio al Sistema…';
+    try {
+      const r = rankFor(reps);
+      const res = await fetch(WAITLIST_ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify({ email, rango: r.l, squat: reps, sfida: challenge || '', _subject: `RANKUP lista d'attesa: rango ${r.l}`, _template: 'table', _captcha: 'false' }) });
+      if (!res.ok) throw new Error();
+      msg.className = 'msg ok'; msg.textContent = 'Registrato. Sei nella lista dei primi cacciatori.'; $('email').value = '';
+    } catch (_) { msg.className = 'msg err'; msg.textContent = 'Invio non riuscito. Riprova tra poco.'; $('btnJoin').disabled = false; }
+  });
+
+  // ---------- share ----------
+  $('btnShare').addEventListener('click', async () => {
+    const r = rankFor(reps); const url = location.origin + location.pathname + '?sfida=' + reps;
+    const text = `Il Sistema mi ha dato il rango ${r.l} (${reps} squat in 30 secondi). Riesci a battermi?`;
+    try { if (navigator.share) { await navigator.share({ title: 'RANKUP', text, url }); return; } } catch (_) { return; }
+    try { await navigator.clipboard.writeText(text + ' ' + url); $('btnShare').textContent = 'Link copiato ✓'; setTimeout(() => { $('btnShare').textContent = 'Sfida un amico'; }, 2500); } catch (_) { prompt('Copia il link:', url); }
+  });
+
+  // ---------- rank card ----------
+  $('btnCard').addEventListener('click', () => {
+    const r = rankFor(reps); const c = document.createElement('canvas'); c.width = 1080; c.height = 1920; const g = c.getContext('2d');
+    g.fillStyle = '#070d1c'; g.fillRect(0, 0, 1080, 1920);
+    g.strokeStyle = 'rgba(111,243,255,.08)'; g.lineWidth = 2; for (let x = 0; x < 1080; x += 90) { g.beginPath(); g.moveTo(x, 0); g.lineTo(x, 1920); g.stroke(); } for (let y = 0; y < 1920; y += 90) { g.beginPath(); g.moveTo(0, y); g.lineTo(1080, y); g.stroke(); }
+    g.strokeStyle = '#ffe27a'; g.lineWidth = 6; g.shadowColor = '#ffe27a'; g.shadowBlur = 30; g.strokeRect(90, 420, 900, 1000); g.shadowBlur = 0;
+    g.textAlign = 'center'; g.fillStyle = '#ffe27a'; g.font = '700 40px Inter, sans-serif'; g.fillText('VALUTAZIONE DEL SISTEMA', 540, 520);
+    g.fillStyle = '#9fb0d6'; g.font = '700 46px Inter, sans-serif'; g.fillText('IL MIO RANGO È', 540, 640);
+    g.fillStyle = '#ffe27a'; g.shadowColor = '#ffe27a'; g.shadowBlur = 50; g.font = '900 360px Inter, sans-serif'; g.fillText(r.l, 540, 1000); g.shadowBlur = 0;
+    g.fillStyle = '#ffffff'; g.font = '900 70px Inter, sans-serif'; g.fillText(r.t.toUpperCase(), 540, 1130);
+    g.fillStyle = '#9fb0d6'; g.font = '700 50px Inter, sans-serif'; g.fillText(`${reps} SQUAT IN 30 SECONDI`, 540, 1250);
+    g.fillStyle = '#6ff3ff'; g.font = '900 64px Inter, sans-serif'; g.fillText('RANKUP', 540, 1620);
+    g.fillStyle = '#9fb0d6'; g.font = '700 40px Inter, sans-serif'; g.fillText('Scopri il tuo: link nel profilo @rankup.irl', 540, 1700);
+    c.toBlob(async (blob) => {
+      const file = new File([blob], `rankup-rango-${r.l}.png`, { type: 'image/png' });
+      try { if (navigator.canShare && navigator.canShare({ files: [file] })) { await navigator.share({ files: [file], title: 'Il mio rango RANKUP' }); return; } } catch (_) { return; }
+      const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = file.name; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+    }, 'image/png');
+  });
+
+  $('btnStart').addEventListener('click', () => { beep(1, .01, .0001); startCamera(); });
+  $('btnManual').addEventListener('click', () => { beep(1, .01, .0001); resetTest(); goManual(); });
+  $('btnGo').addEventListener('click', () => { $('btnGo').hidden = true; countdown(); });
+  $('btnBack').addEventListener('click', () => { stopCamera(); resetTest(); show('s-intro'); });
+  $('btnAgain').addEventListener('click', () => { resetTest(); show('s-intro'); });
+</script>
+</body>
+</html>
