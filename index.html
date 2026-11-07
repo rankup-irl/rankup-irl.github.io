@@ -10,7 +10,9 @@
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;background:#03050b;color:#e8f6ff;font-family:Inter,system-ui,sans-serif;overflow:hidden}
 #stage{position:fixed;inset:0}
-video,canvas{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform:scaleX(-1)}
+video,canvas{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
+.mirror video,.mirror canvas{transform:scaleX(-1)}
+#flip{position:fixed;right:16px;bottom:calc(env(safe-area-inset-bottom) + 110px);width:auto;margin:0;padding:12px 14px;font-size:13px;letter-spacing:.08em;z-index:3;background:rgba(4,8,16,.8);color:var(--a);border:2px solid var(--a);box-shadow:0 0 12px rgba(111,243,255,.4)}
 video{filter:brightness(.55) saturate(.7) contrast(1.1)}
 .scan{position:fixed;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(0,0,0,.22) 0 1px,transparent 1px 3px)}
 .hud{position:fixed;left:0;right:0;pointer-events:none;padding:calc(env(safe-area-inset-top) + 14px) 16px 0}
@@ -39,7 +41,7 @@ button{font:inherit;font-weight:900;font-size:17px;letter-spacing:.14em;color:#0
 </style>
 </head>
 <body>
-<div id="stage"><video id="cam" playsinline muted></video><canvas id="cv"></canvas></div>
+<div id="stage" class="mirror"><video id="cam" playsinline muted></video><canvas id="cv"></canvas></div>
 <div class="scan"></div>
 
 <div class="hud" id="hud">
@@ -50,6 +52,7 @@ button{font:inherit;font-weight:900;font-size:17px;letter-spacing:.14em;color:#0
   </div>
 </div>
 <div id="angle" class="box hide"><div class="lab">GINOCCHIO</div><b id="deg">–</b></div>
+<button id="flip" class="hide">⟲ CAMBIA FOTOCAMERA</button>
 <div id="msg">IL SISTEMA SI STA ATTIVANDO…</div>
 
 <div class="screen" id="start">
@@ -59,7 +62,7 @@ button{font:inherit;font-weight:900;font-size:17px;letter-spacing:.14em;color:#0
     <p>Missione: 20 squat validi. Solo le ripetizioni fatte bene vengono contate.</p>
     <ol>
       <li>Appoggia il telefono a terra o a un mobile, in verticale.</li>
-      <li>Allontanati di 2-3 metri: devi vederti <b>dalla testa ai piedi</b>.</li>
+      <li>Allontanati di 2-3 metri: devi vederti <b>dalla testa ai piedi</b>. Se non entri, usa il tasto "Cambia fotocamera": la posteriore inquadra di più.</li>
       <li>Mettiti di tre quarti o di lato, in una stanza luminosa.</li>
     </ol>
     <button id="go">ATTIVA IL SISTEMA</button>
@@ -106,18 +109,24 @@ async function init() {
   catch (e) { landmarker = await PoseLandmarker.createFromOptions(files, opts("CPU")); }
 }
 
+let facing = "user";
+async function openCam() {
+  if (video.srcObject) video.srcObject.getTracks().forEach(t => t.stop());
+  const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: facing }, audio: false });
+  video.srcObject = stream; await video.play();
+  $("stage").classList.toggle("mirror", facing === "user");
+}
 async function start() {
   $("err").textContent = ""; $("go").textContent = "ATTIVAZIONE…";
   try {
-    const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user", width: { ideal: 720 }, height: { ideal: 1280 } }, audio: false });
-    video.srcObject = stream; await video.play();
+    await openCam();
     if (!landmarker) await init();
   } catch (e) {
     $("go").textContent = "ATTIVA IL SISTEMA";
     $("err").textContent = "Impossibile usare la fotocamera: consenti l'accesso nelle impostazioni del browser e riprova. (" + (e.name || e.message) + ")";
     return;
   }
-  $("start").classList.add("hide"); $("angle").classList.remove("hide");
+  $("start").classList.add("hide"); $("angle").classList.remove("hide"); $("flip").classList.remove("hide");
   reset(); running = true; say("ENTRA NELL'INQUADRATURA"); requestAnimationFrame(loop);
 }
 
@@ -128,8 +137,8 @@ function reset() {
 
 function draw(lm, kneeAng, side) {
   const w = cv.width, h = cv.height;
-  // video is object-fit:cover — map normalized coords to canvas with same cover transform
-  const vw = video.videoWidth, vh = video.videoHeight, s = Math.max(w / vw, h / vh);
+  // video is object-fit:contain — map normalized coords to canvas with same cover transform
+  const vw = video.videoWidth, vh = video.videoHeight, s = Math.min(w / vw, h / vh);
   const ox = (w - vw * s) / 2, oy = (h - vh * s) / 2;
   const P = p => [ox + p.x * vw * s, oy + p.y * vh * s];
   ctx.clearRect(0, 0, w, h);
@@ -228,6 +237,7 @@ function finish() {
 }
 
 $("go").onclick = start;
+$("flip").onclick = async () => { facing = facing === "user" ? "environment" : "user"; try { await openCam(); smooth = null; say(facing === "user" ? "FOTOCAMERA FRONTALE" : "FOTOCAMERA POSTERIORE"); } catch (e) { say("FOTOCAMERA NON DISPONIBILE", "bad"); } };
 $("again").onclick = () => { $("end").classList.add("hide"); reset(); running = true; say("PRONTO. INIZIA LO SQUAT"); requestAnimationFrame(loop); };
 </script>
 </body>
