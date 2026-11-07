@@ -141,9 +141,10 @@ input{width:100%;font:inherit;font-weight:800;font-size:22px;text-align:center;c
     <div class="win hide" id="onb3">
       <div class="tag"><i>!</i>VALUTAZIONE</div>
       <div class="title">TEST INIZIALE</div><hr>
-      <p class="lead">Quante flessioni riesci a fare di fila, senza fermarti? Sii onesto: il Sistema calibra le missioni su questo numero.</p>
-      <label>FLESSIONI DI FILA</label>
-      <input id="ipush" type="number" inputmode="numeric" min="0" max="300" placeholder="0">
+      <p class="lead">Quanti squat riesci a fare in 30 secondi? Vale per ogni percorso: il Sistema calibra le missioni su questo numero.</p>
+      <p class="lead" style="font-size:14px">Non lo sai? <a href="rango.html" style="color:var(--a);font-weight:800">Fai il test con la fotocamera</a> e torna qui: il numero si compila da solo.</p>
+      <label>SQUAT IN 30 SECONDI</label>
+      <input id="ipush" type="number" inputmode="numeric" min="0" max="120" placeholder="0">
       <button class="btn big" id="start">ACCETTO IL SISTEMA</button>
     </div>
   </section>
@@ -345,13 +346,14 @@ document.addEventListener("click", e => {
 // ================= ONBOARDING =================
 $("goals").innerHTML = Object.entries(GOALS).map(([k, g]) => `<div class="goal" data-g="${k}"><div class="ic">${g.ic}</div><div><b>${g.name}</b><small>${g.desc}</small></div></div>`).join("");
 $("goals").onclick = e => { const g = e.target.closest(".goal"); if (!g) return; pickedGoal = g.dataset.g; document.querySelectorAll(".goal").forEach(x => x.classList.toggle("on", x === g)); };
+try { const t = JSON.parse(localStorage.getItem("rankup-rango") || "null"); if (t && t.reps >= 0) $("ipush").value = t.reps; } catch (_) {}
 $("n1").onclick = () => { $("onb1").classList.add("hide"); $("onb2").classList.remove("hide"); };
 $("n2").onclick = () => { if (!pickedGoal) { $("goals").animate([{ transform: "translateX(-6px)" }, { transform: "translateX(6px)" }, { transform: "none" }], { duration: 250 }); return; } $("onb2").classList.add("hide"); $("onb3").classList.remove("hide"); };
 $("start").onclick = () => {
-  const name = $("iname").value.trim() || "Giocatore", p = Math.max(0, parseInt($("ipush").value || "0", 10)), lv = startLevel(p);
+  const name = $("iname").value.trim() || "Giocatore", sq = Math.max(0, parseInt($("ipush").value || "0", 10)), p = Math.round(sq * 0.8), lv = startLevel(p);
   S = { name, goal: pickedGoal, lv, xp: 0, streak: 0, day: null, qdone: false, quest: [], penalty: null, stats: { f: 10 + Math.round(p / 5), a: 8, r: 7, d: 5 }, lastGain: null, verified: 0, accSum: 0, accN: 0 };
   newDay(); render();
-  overlay("GIOCATORE REGISTRATO", `Percorso: ${GOALS[pickedGoal].ic} ${GOALS[pickedGoal].name}<br>Test: ${p} flessioni. La tua prima missione è pronta.<br>Usa 👁 per far verificare gli squat al Sistema.`, "RANGO " + rankOf(lv)[0], false);
+  overlay("GIOCATORE REGISTRATO", `Percorso: ${GOALS[pickedGoal].ic} ${GOALS[pickedGoal].name}<br>Test: ${sq} squat in 30 secondi. La tua prima missione è pronta.<br>Usa 👁 per far verificare gli squat al Sistema.`, "RANGO " + rankOf(lv)[0], false);
 };
 $("ovok").onclick = () => $("ov").classList.remove("on");
 
