@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<title>RANKUP – Il Sistema ti osserva</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@600;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--a:#6ff3ff;--b:#2f7bff;--r:#ff5a6e;--g:#ffe27a;--ok:#7dffa8}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:#03050b;color:#e8f6ff;font-family:Inter,system-ui,sans-serif;overflow:hidden}
+#stage{position:fixed;inset:0}
+video,canvas{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform:scaleX(-1)}
+video{filter:brightness(.55) saturate(.7) contrast(1.1)}
+.scan{position:fixed;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(0,0,0,.22) 0 1px,transparent 1px 3px)}
+.hud{position:fixed;left:0;right:0;pointer-events:none;padding:calc(env(safe-area-inset-top) + 14px) 16px 0}
+.top{display:flex;justify-content:space-between;align-items:flex-start}
+.box{background:rgba(4,8,16,.72);border:2px solid var(--a);border-radius:12px;padding:10px 14px;box-shadow:0 0 14px rgba(111,243,255,.35)}
+.lab{font-size:10px;letter-spacing:.3em;font-weight:800;color:var(--a)}
+.count{font-size:54px;font-weight:900;line-height:1;text-shadow:0 0 16px var(--a)}
+.count small{font-size:22px;color:#9fb6cc}
+.grade{font-size:54px;font-weight:900;line-height:1;text-align:center;min-width:64px}
+.bar{height:8px;border:1px solid var(--a);border-radius:5px;margin-top:10px;overflow:hidden}
+.bar div{height:100%;width:0;background:linear-gradient(90deg,var(--b),var(--a));box-shadow:0 0 10px var(--a);transition:width .4s}
+#msg{position:fixed;left:16px;right:16px;bottom:calc(env(safe-area-inset-bottom) + 26px);text-align:center;font-weight:900;font-size:22px;letter-spacing:.06em;padding:14px;border-radius:12px;background:rgba(4,8,16,.78);border:2px solid var(--a);color:#fff;transition:border-color .2s,color .2s;pointer-events:none}
+#msg.bad{border-color:var(--r);color:var(--r);box-shadow:0 0 18px rgba(255,90,110,.5)}
+#msg.good{border-color:var(--ok);color:var(--ok);box-shadow:0 0 18px rgba(125,255,168,.45)}
+#angle{position:fixed;right:16px;top:50%;transform:translateY(-50%);text-align:center}
+#angle b{display:block;font-size:30px;font-weight:900}
+.screen{position:fixed;inset:0;display:grid;place-items:center;padding:24px;background:radial-gradient(ellipse at 50% 35%,#12203f,#03050b 70%);z-index:5}
+.win{width:100%;max-width:400px;text-align:center;background:rgba(6,10,20,.9);border:2px solid var(--a);border-radius:14px;padding:22px;box-shadow:0 0 22px rgba(111,243,255,.35)}
+.win h1{font-size:26px;font-weight:900;margin:10px 0;text-shadow:0 0 12px rgba(111,243,255,.6)}
+.win p{color:#9fb6cc;font-weight:600;line-height:1.5;margin:8px 0}
+.win ol{text-align:left;color:#cfe6f5;font-weight:600;line-height:1.6;margin:12px 0 4px 20px}
+button{font:inherit;font-weight:900;font-size:17px;letter-spacing:.14em;color:#03050b;background:linear-gradient(90deg,var(--a),#a9f8ff);border:0;border-radius:10px;padding:15px;width:100%;margin-top:14px;box-shadow:0 0 18px rgba(111,243,255,.5)}
+.hide{display:none!important}
+.huge{font-size:64px;font-weight:900;color:var(--g);text-shadow:0 0 22px var(--g);margin:6px 0}
+#err{color:var(--r)}
+</style>
+</head>
+<body>
+<div id="stage"><video id="cam" playsinline muted></video><canvas id="cv"></canvas></div>
+<div class="scan"></div>
+
+<div class="hud" id="hud">
+  <div class="top">
+    <div class="box"><div class="lab">SQUAT</div><div class="count"><span id="reps">0</span><small> / <span id="target">20</span></small></div>
+      <div class="bar"><div id="xp"></div></div></div>
+    <div class="box"><div class="lab">VOTO</div><div class="grade" id="grade">–</div></div>
+  </div>
+</div>
+<div id="angle" class="box hide"><div class="lab">GINOCCHIO</div><b id="deg">–</b></div>
+<div id="msg">IL SISTEMA SI STA ATTIVANDO…</div>
+
+<div class="screen" id="start">
+  <div class="win">
+    <div class="lab">! NOTIFICA DEL SISTEMA</div>
+    <h1>IL SISTEMA TI OSSERVA</h1>
+    <p>Missione: 20 squat validi. Solo le ripetizioni fatte bene vengono contate.</p>
+    <ol>
+      <li>Appoggia il telefono a terra o a un mobile, in verticale.</li>
+      <li>Allontanati di 2-3 metri: devi vederti <b>dalla testa ai piedi</b>.</li>
+      <li>Mettiti di tre quarti o di lato, in una stanza luminosa.</li>
+    </ol>
+    <button id="go">ATTIVA IL SISTEMA</button>
+    <p id="err"></p>
+    <p style="font-size:12px">Il video resta sul tuo telefono: nessuna immagine viene inviata o salvata.</p>
+  </div>
+</div>
+
+<div class="screen hide" id="end">
+  <div class="win" style="border-color:var(--g);box-shadow:0 0 26px rgba(255,194,61,.5)">
+    <div class="lab" style="color:var(--g)">! NOTIFICA DEL SISTEMA</div>
+    <h1 style="color:var(--g)">MISSIONE COMPLETATA</h1>
+    <div class="huge" id="endrank">S</div>
+    <p id="endtxt"></p>
+    <button id="again">RIPETI LA MISSIONE</button>
+  </div>
+</div>
+
+<script type="module">
+const VER = "0.10.14";
+const $ = id => document.getElementById(id);
+const video = $("cam"), cv = $("cv"), ctx = cv.getContext("2d");
+const TARGET = 20;
+let landmarker = null, running = false, lastTs = -1;
+
+// ---- squat state ----
+let state = "up", minAngle = 180, reps = 0, attempts = 0, gradesSum = 0, lastMsgT = 0, smooth = null, leanWarn = false;
+const UP = 160, DOWN_START = 140;
+const GRADES = [[85, "S", "#ffe27a", 100], [100, "A", "#7dffa8", 85], [115, "B", "#6ff3ff", 70]];
+
+function say(text, cls = "") { const m = $("msg"); m.textContent = text; m.className = cls; lastMsgT = performance.now(); }
+function angle(a, b, c) {
+  const v1 = [a.x - b.x, a.y - b.y], v2 = [c.x - b.x, c.y - b.y];
+  const d = (v1[0]*v2[0] + v1[1]*v2[1]) / (Math.hypot(...v1) * Math.hypot(...v2) + 1e-6);
+  return Math.acos(Math.max(-1, Math.min(1, d))) * 180 / Math.PI;
+}
+
+async function init() {
+  const { PoseLandmarker, FilesetResolver } = await import(`https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@${VER}/vision_bundle.mjs`);
+  const files = await FilesetResolver.forVisionTasks(`https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@${VER}/wasm`);
+  const opts = d => ({ baseOptions: { modelAssetPath: "https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_lite/float16/1/pose_landmarker_lite.task", delegate: d },
+                       runningMode: "VIDEO", numPoses: 1 });
+  try { landmarker = await PoseLandmarker.createFromOptions(files, opts("GPU")); }
+  catch (e) { landmarker = await PoseLandmarker.createFromOptions(files, opts("CPU")); }
+}
+
+async function start() {
+  $("err").textContent = ""; $("go").textContent = "ATTIVAZIONE…";
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user", width: { ideal: 720 }, height: { ideal: 1280 } }, audio: false });
+    video.srcObject = stream; await video.play();
+    if (!landmarker) await init();
+  } catch (e) {
+    $("go").textContent = "ATTIVA IL SISTEMA";
+    $("err").textContent = "Impossibile usare la fotocamera: consenti l'accesso nelle impostazioni del browser e riprova. (" + (e.name || e.message) + ")";
+    return;
+  }
+  $("start").classList.add("hide"); $("angle").classList.remove("hide");
+  reset(); running = true; say("ENTRA NELL'INQUADRATURA"); requestAnimationFrame(loop);
+}
+
+function reset() {
+  state = "up"; minAngle = 180; reps = 0; attempts = 0; gradesSum = 0; smooth = null;
+  $("reps").textContent = 0; $("target").textContent = TARGET; $("xp").style.width = "0%"; $("grade").textContent = "–"; $("grade").style.color = "#fff";
+}
+
+function draw(lm, kneeAng, side) {
+  const w = cv.width, h = cv.height;
+  // video is object-fit:cover — map normalized coords to canvas with same cover transform
+  const vw = video.videoWidth, vh = video.videoHeight, s = Math.max(w / vw, h / vh);
+  const ox = (w - vw * s) / 2, oy = (h - vh * s) / 2;
+  const P = p => [ox + p.x * vw * s, oy + p.y * vh * s];
+  ctx.clearRect(0, 0, w, h);
+  const bones = [[11,12],[11,13],[13,15],[12,14],[14,16],[11,23],[12,24],[23,24],[23,25],[25,27],[24,26],[26,28],[27,31],[28,32]];
+  ctx.lineCap = "round"; ctx.shadowColor = "#6ff3ff"; ctx.shadowBlur = 18;
+  ctx.strokeStyle = "rgba(111,243,255,.95)"; ctx.lineWidth = Math.max(4, w / 160);
+  for (const [a, b] of bones) {
+    if (lm[a].visibility < .4 || lm[b].visibility < .4) continue;
+    const [x1, y1] = P(lm[a]), [x2, y2] = P(lm[b]);
+    ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+  }
+  ctx.fillStyle = "#fff";
+  for (const i of [11,12,13,14,15,16,23,24,25,26,27,28]) {
+    if (lm[i].visibility < .4) continue; const [x, y] = P(lm[i]);
+    ctx.beginPath(); ctx.arc(x, y, Math.max(5, w / 140), 0, 7); ctx.fill();
+  }
+  // knee angle wedge
+  if (kneeAng != null) {
+    const [hp, kn, an] = side.map(i => P(lm[i]));
+    const a1 = Math.atan2(hp[1] - kn[1], hp[0] - kn[0]), a2 = Math.atan2(an[1] - kn[1], an[0] - kn[0]);
+    let start = a1, end = a2; let diff = end - start; while (diff > Math.PI) diff -= 2*Math.PI; while (diff < -Math.PI) diff += 2*Math.PI;
+    const good = kneeAng <= 100;
+    ctx.fillStyle = good ? "rgba(125,255,168,.35)" : "rgba(111,243,255,.25)";
+    ctx.shadowColor = good ? "#7dffa8" : "#6ff3ff";
+    ctx.beginPath(); ctx.moveTo(kn[0], kn[1]); ctx.arc(kn[0], kn[1], w / 7, start, start + diff, diff < 0); ctx.closePath(); ctx.fill();
+  }
+  ctx.shadowBlur = 0;
+}
+
+function loop() {
+  if (!running) return;
+  if (cv.width !== innerWidth * devicePixelRatio) { cv.width = innerWidth * devicePixelRatio; cv.height = innerHeight * devicePixelRatio; }
+  const now = performance.now();
+  if (video.readyState >= 2 && now !== lastTs) {
+    lastTs = now;
+    const res = landmarker.detectForVideo(video, now);
+    const lm = res.landmarks && res.landmarks[0];
+    if (!lm) { ctx.clearRect(0, 0, cv.width, cv.height); if (now - lastMsgT > 800) say("ENTRA NELL'INQUADRATURA", "bad"); }
+    else process(lm, now);
+  }
+  requestAnimationFrame(loop);
+}
+
+function process(lm, now) {
+  // pick the side with better visibility
+  const L = [23, 25, 27], R = [24, 26, 28];
+  const vis = s => s.reduce((t, i) => t + lm[i].visibility, 0);
+  const side = vis(L) >= vis(R) ? L : R;
+  const fullBody = vis(side) / 3 > .6 && lm[0].visibility > .5;
+  if (!fullBody) { draw(lm, null, side); if (now - lastMsgT > 800) say("ALLONTANATI: DEVO VEDERTI DALLA TESTA AI PIEDI", "bad"); return; }
+  const raw = angle(lm[side[0]], lm[side[1]], lm[side[2]]);
+  smooth = smooth == null ? raw : smooth * 0.6 + raw * 0.4;
+  const k = smooth;
+  $("deg").textContent = Math.round(k) + "°";
+  draw(lm, k, side);
+
+  // torso lean: shoulder-hip line vs vertical
+  const sh = side === L ? lm[11] : lm[12], hp = lm[side[0]];
+  const lean = Math.abs(Math.atan2(sh.x - hp.x, hp.y - sh.y) * 180 / Math.PI);
+
+  if (state === "up") {
+    if (k < DOWN_START) { state = "down"; minAngle = k; leanWarn = false; }
+    else if (now - lastMsgT > 1500) say(reps === 0 ? "PRONTO. INIZIA LO SQUAT" : "CONTINUA, GIOCATORE");
+  } else {
+    minAngle = Math.min(minAngle, k);
+    if (lean > 55) leanWarn = true;
+    if (k < 100 && now - lastMsgT > 600) say("BENE. ORA RISALI", "good");
+    if (k > UP) {                       // rep finished
+      state = "up"; attempts++;
+      const g = GRADES.find(([lim]) => minAngle <= lim);
+      if (leanWarn) { flashGrade("E", "#ff5a6e"); say("NON VALIDA: SCHIENA TROPPO INCLINATA", "bad"); }
+      else if (!g) { flashGrade("E", "#ff5a6e"); say("NON VALIDA: SCENDI DI PIÙ", "bad"); }
+      else {
+        reps++; gradesSum += g[3]; flashGrade(g[1], g[2]);
+        say(g[1] === "S" ? "RIPETIZIONE PERFETTA" : g[1] === "A" ? "RIPETIZIONE VALIDA" : "VALIDA, MA PUOI SCENDERE DI PIÙ", "good");
+        $("reps").textContent = reps; $("xp").style.width = (reps / TARGET * 100) + "%";
+        if (navigator.vibrate) navigator.vibrate(40);
+        if (reps >= TARGET) finish();
+      }
+    }
+  }
+}
+
+function flashGrade(letter, color) {
+  const g = $("grade"); g.textContent = letter; g.style.color = color; g.style.textShadow = `0 0 18px ${color}`;
+  g.animate([{ transform: "scale(1.6)" }, { transform: "scale(1)" }], { duration: 300, easing: "ease-out" });
+}
+
+function finish() {
+  running = false;
+  const avg = gradesSum / reps, acc = Math.round(reps / attempts * 100);
+  const rank = avg >= 95 ? "S" : avg >= 82 ? "A" : avg >= 70 ? "B" : "C";
+  $("endrank").textContent = "RANGO " + rank;
+  $("endtxt").innerHTML = `${reps} squat validi su ${attempts} tentativi<br>Precisione: ${acc}% · +250 EXP`;
+  $("end").classList.remove("hide");
+}
+
+$("go").onclick = start;
+$("again").onclick = () => { $("end").classList.add("hide"); reset(); running = true; say("PRONTO. INIZIA LO SQUAT"); requestAnimationFrame(loop); };
+</script>
+</body>
+</html>
