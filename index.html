@@ -7,15 +7,15 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@600;800;900&display=swap" rel="stylesheet">
 <style>
 :root{--a:#6ff3ff;--b:#2f7bff;--r:#ff5a6e;--g:#ffe27a;--ok:#7dffa8}
-*{box-sizing:border-box;margin:0;padding:0}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;background:#03050b;color:#e8f6ff;font-family:Inter,system-ui,sans-serif;overflow:hidden}
 #stage{position:fixed;inset:0}
-video,canvas{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
-.mirror video,.mirror canvas{transform:scaleX(-1)}
-#flip{position:fixed;right:16px;bottom:calc(env(safe-area-inset-bottom) + 110px);width:auto;margin:0;padding:12px 14px;font-size:13px;letter-spacing:.08em;z-index:3;background:rgba(4,8,16,.8);color:var(--a);border:2px solid var(--a);box-shadow:0 0 12px rgba(111,243,255,.4)}
+video,canvas.layer{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
+.mirror video,.mirror canvas.layer{transform:scaleX(-1)}
 video{filter:brightness(.55) saturate(.7) contrast(1.1)}
+#fx{pointer-events:none}
 .scan{position:fixed;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(0,0,0,.22) 0 1px,transparent 1px 3px)}
-.hud{position:fixed;left:0;right:0;pointer-events:none;padding:calc(env(safe-area-inset-top) + 14px) 16px 0}
+.hud{position:fixed;left:0;right:0;top:0;pointer-events:none;padding:calc(env(safe-area-inset-top) + 14px) 16px 0;transition:opacity .3s}
 .top{display:flex;justify-content:space-between;align-items:flex-start}
 .box{background:rgba(4,8,16,.72);border:2px solid var(--a);border-radius:12px;padding:10px 14px;box-shadow:0 0 14px rgba(111,243,255,.35)}
 .lab{font-size:10px;letter-spacing:.3em;font-weight:800;color:var(--a)}
@@ -24,25 +24,39 @@ video{filter:brightness(.55) saturate(.7) contrast(1.1)}
 .grade{font-size:54px;font-weight:900;line-height:1;text-align:center;min-width:64px}
 .bar{height:8px;border:1px solid var(--a);border-radius:5px;margin-top:10px;overflow:hidden}
 .bar div{height:100%;width:0;background:linear-gradient(90deg,var(--b),var(--a));box-shadow:0 0 10px var(--a);transition:width .4s}
-#msg{position:fixed;left:16px;right:16px;bottom:calc(env(safe-area-inset-bottom) + 26px);text-align:center;font-weight:900;font-size:22px;letter-spacing:.06em;padding:14px;border-radius:12px;background:rgba(4,8,16,.78);border:2px solid var(--a);color:#fff;transition:border-color .2s,color .2s;pointer-events:none}
+#msg{position:fixed;left:16px;right:16px;bottom:calc(env(safe-area-inset-bottom) + 26px);text-align:center;font-weight:900;font-size:21px;letter-spacing:.06em;padding:14px;border-radius:12px;background:rgba(4,8,16,.8);border:2px solid var(--a);color:#fff;pointer-events:none}
 #msg.bad{border-color:var(--r);color:var(--r);box-shadow:0 0 18px rgba(255,90,110,.5)}
 #msg.good{border-color:var(--ok);color:var(--ok);box-shadow:0 0 18px rgba(125,255,168,.45)}
-#angle{position:fixed;right:16px;top:50%;transform:translateY(-50%);text-align:center}
-#angle b{display:block;font-size:30px;font-weight:900}
-.screen{position:fixed;inset:0;display:grid;place-items:center;padding:24px;background:radial-gradient(ellipse at 50% 35%,#12203f,#03050b 70%);z-index:5}
-.win{width:100%;max-width:400px;text-align:center;background:rgba(6,10,20,.9);border:2px solid var(--a);border-radius:14px;padding:22px;box-shadow:0 0 22px rgba(111,243,255,.35)}
-.win h1{font-size:26px;font-weight:900;margin:10px 0;text-shadow:0 0 12px rgba(111,243,255,.6)}
-.win p{color:#9fb6cc;font-weight:600;line-height:1.5;margin:8px 0}
-.win ol{text-align:left;color:#cfe6f5;font-weight:600;line-height:1.6;margin:12px 0 4px 20px}
-button{font:inherit;font-weight:900;font-size:17px;letter-spacing:.14em;color:#03050b;background:linear-gradient(90deg,var(--a),#a9f8ff);border:0;border-radius:10px;padding:15px;width:100%;margin-top:14px;box-shadow:0 0 18px rgba(111,243,255,.5)}
+#depth{position:fixed;right:16px;top:50%;transform:translateY(-50%);text-align:center;width:92px}
+#depth b{display:block;font-size:28px;font-weight:900}
+.dbar{height:120px;width:14px;margin:8px auto 0;border:1px solid var(--a);border-radius:7px;position:relative;overflow:hidden}
+.dbar i{position:absolute;left:0;right:0;bottom:0;height:0;background:linear-gradient(0deg,var(--b),var(--a));box-shadow:0 0 10px var(--a)}
+.dbar s{position:absolute;left:-4px;right:-4px;height:2px;background:var(--g)}
+#big{position:fixed;inset:0;display:grid;place-items:center;pointer-events:none;font-weight:900;font-size:160px;color:#fff;text-shadow:0 0 40px var(--a),0 0 80px var(--b);opacity:0}
+#big.on{animation:pop .9s ease-out}
+@keyframes pop{0%{opacity:0;transform:scale(1.8)}20%{opacity:1;transform:scale(1)}80%{opacity:1}100%{opacity:0;transform:scale(.9)}}
+#flash{position:fixed;inset:0;background:#fff;opacity:0;pointer-events:none}
+#flash.on{animation:fl .25s ease-out}
+@keyframes fl{0%{opacity:.55}100%{opacity:0}}
+.screen{position:fixed;inset:0;display:grid;place-items:center;padding:20px;background:radial-gradient(ellipse at 50% 35%,#12203f,#03050b 70%);z-index:5;overflow:auto}
+.win{width:100%;max-width:400px;text-align:center;background:rgba(6,10,20,.92);border:2px solid var(--a);border-radius:14px;padding:20px;box-shadow:0 0 22px rgba(111,243,255,.35)}
+.win h1{font-size:25px;font-weight:900;margin:10px 0;text-shadow:0 0 12px rgba(111,243,255,.6)}
+.win p{color:#9fb6cc;font-weight:600;line-height:1.5;margin:8px 0;font-size:15px}
+.win ol{text-align:left;color:#cfe6f5;font-weight:600;line-height:1.55;margin:10px 0 4px 20px;font-size:15px}
+button{font:inherit;font-weight:900;font-size:16px;letter-spacing:.12em;color:#03050b;background:linear-gradient(90deg,var(--a),#a9f8ff);border:0;border-radius:10px;padding:15px;width:100%;margin-top:12px;box-shadow:0 0 18px rgba(111,243,255,.5);cursor:pointer}
+button.ghost{background:transparent;color:var(--a);border:2px solid var(--a);box-shadow:none}
+#flip{position:fixed;right:16px;bottom:calc(env(safe-area-inset-bottom) + 108px);width:auto;margin:0;padding:11px 13px;font-size:12px;letter-spacing:.08em;z-index:3;background:rgba(4,8,16,.8);color:var(--a);border:2px solid var(--a)}
+#sound{position:fixed;left:16px;bottom:calc(env(safe-area-inset-bottom) + 108px);width:auto;margin:0;padding:11px 13px;font-size:12px;letter-spacing:.08em;z-index:3;background:rgba(4,8,16,.8);color:var(--a);border:2px solid var(--a)}
 .hide{display:none!important}
-.huge{font-size:64px;font-weight:900;color:var(--g);text-shadow:0 0 22px var(--g);margin:6px 0}
+#card{display:block;margin-left:auto;margin-right:auto;max-width:100%;max-height:52vh;width:auto;border-radius:12px;margin-top:6px;box-shadow:0 0 24px rgba(255,226,122,.35)}
 #err{color:var(--r)}
+.small{font-size:12px!important}
 </style>
 </head>
 <body>
-<div id="stage" class="mirror"><video id="cam" playsinline muted></video><canvas id="cv"></canvas></div>
+<div id="stage" class="mirror"><video id="cam" playsinline muted></video><canvas id="cv" class="layer"></canvas><canvas id="fx" class="layer"></canvas></div>
 <div class="scan"></div>
+<div id="flash"></div>
 
 <div class="hud" id="hud">
   <div class="top">
@@ -51,23 +65,25 @@ button{font:inherit;font-weight:900;font-size:17px;letter-spacing:.14em;color:#0
     <div class="box"><div class="lab">VOTO</div><div class="grade" id="grade">–</div></div>
   </div>
 </div>
-<div id="angle" class="box hide"><div class="lab">GINOCCHIO</div><b id="deg">–</b></div>
-<button id="flip" class="hide">⟲ CAMBIA FOTOCAMERA</button>
+<div id="depth" class="box hide"><div class="lab">PROFON&shy;DITÀ</div><b id="deg">–</b><div class="dbar"><s style="bottom:46%"></s><i id="dfill"></i></div></div>
+<div id="big"></div>
+<button id="flip" class="hide">⟲ FOTOCAMERA</button>
+<button id="sound" class="hide">🔊 VOCE ON</button>
 <div id="msg">IL SISTEMA SI STA ATTIVANDO…</div>
 
 <div class="screen" id="start">
   <div class="win">
     <div class="lab">! NOTIFICA DEL SISTEMA</div>
     <h1>IL SISTEMA TI OSSERVA</h1>
-    <p>Missione: 20 squat validi. Solo le ripetizioni fatte bene vengono contate.</p>
+    <p>Missione: <b>20 squat validi</b>. Il Sistema conta solo le ripetizioni fatte bene e ti parla mentre ti alleni.</p>
     <ol>
-      <li>Appoggia il telefono a terra o a un mobile, in verticale.</li>
-      <li>Allontanati di 2-3 metri: devi vederti <b>dalla testa ai piedi</b>. Se non entri, usa il tasto "Cambia fotocamera": la posteriore inquadra di più.</li>
-      <li>Mettiti di tre quarti o di lato, in una stanza luminosa.</li>
+      <li>Appoggia il telefono in verticale, all'altezza del bacino.</li>
+      <li>Allontanati di 2-3 metri e entra nella sagoma.</li>
+      <li>Resta fermo in piedi: il Sistema ti scansiona e parte il conto alla rovescia.</li>
     </ol>
     <button id="go">ATTIVA IL SISTEMA</button>
     <p id="err"></p>
-    <p style="font-size:12px">Il video resta sul tuo telefono: nessuna immagine viene inviata o salvata.</p>
+    <p class="small">Alza il volume. Il video resta sul tuo telefono: nessuna immagine viene inviata o salvata.</p>
   </div>
 </div>
 
@@ -75,170 +91,321 @@ button{font:inherit;font-weight:900;font-size:17px;letter-spacing:.14em;color:#0
   <div class="win" style="border-color:var(--g);box-shadow:0 0 26px rgba(255,194,61,.5)">
     <div class="lab" style="color:var(--g)">! NOTIFICA DEL SISTEMA</div>
     <h1 style="color:var(--g)">MISSIONE COMPLETATA</h1>
-    <div class="huge" id="endrank">S</div>
-    <p id="endtxt"></p>
-    <button id="again">RIPETI LA MISSIONE</button>
+    <img id="card" alt="La tua carta del giocatore">
+    <button id="share">CONDIVIDI LA TUA CARTA</button>
+    <p class="small" id="sharehint">Oppure tieni premuta l'immagine e scegli "Salva nelle foto".</p>
+    <button id="again" class="ghost">RIPETI LA MISSIONE</button>
   </div>
 </div>
 
 <script type="module">
 const VER = "0.10.14";
 const $ = id => document.getElementById(id);
-const video = $("cam"), cv = $("cv"), ctx = cv.getContext("2d");
+const video = $("cam"), cv = $("cv"), ctx = cv.getContext("2d"), fx = $("fx"), fctx = fx.getContext("2d");
 const TARGET = 20;
-let landmarker = null, running = false, lastTs = -1;
+const DEPTH_GRADES = [[0.85, "S", "#ffe27a", 100], [0.7, "A", "#7dffa8", 85], [0.55, "B", "#6ff3ff", 70]];
+let landmarker = null, running = false, lastTs = -1, facing = "user";
 
-// ---- squat state ----
-let state = "up", minAngle = 180, reps = 0, attempts = 0, gradesSum = 0, lastMsgT = 0, smooth = null, leanWarn = false;
-const UP = 160, DOWN_START = 140;
-const GRADES = [[85, "S", "#ffe27a", 100], [100, "A", "#7dffa8", 85], [115, "B", "#6ff3ff", 70]];
-
-function say(text, cls = "") { const m = $("msg"); m.textContent = text; m.className = cls; lastMsgT = performance.now(); }
-function angle(a, b, c) {
-  const v1 = [a.x - b.x, a.y - b.y], v2 = [c.x - b.x, c.y - b.y];
-  const d = (v1[0]*v2[0] + v1[1]*v2[1]) / (Math.hypot(...v1) * Math.hypot(...v2) + 1e-6);
-  return Math.acos(Math.max(-1, Math.min(1, d))) * 180 / Math.PI;
+// ---------------- audio + voice ----------------
+let ac = null, voiceOn = true, itVoice = null;
+function initAudio() {
+  try { ac = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { ac = null; }
+  const pick = () => { const vs = speechSynthesis.getVoices(); itVoice = vs.find(v => /it[-_]IT/i.test(v.lang)) || vs.find(v => /^it/i.test(v.lang)) || null; };
+  try { pick(); speechSynthesis.onvoiceschanged = pick; } catch (e) {}
 }
+function tone(f, d = 0.09, type = "square", vol = 0.06, when = 0) {
+  if (!ac) return; const t = ac.currentTime + when;
+  const o = ac.createOscillator(), g = ac.createGain(); o.type = type; o.frequency.setValueAtTime(f, t);
+  g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.0001, t + d);
+  o.connect(g).connect(ac.destination); o.start(t); o.stop(t + d + 0.02);
+}
+const sfx = {
+  rep: () => { tone(880, .08); tone(1320, .1, "square", .05, .07); },
+  perfect: () => { [880, 1108, 1320, 1760].forEach((f, i) => tone(f, .12, "square", .05, i * .06)); },
+  bad: () => { tone(160, .25, "sawtooth", .08); tone(120, .3, "sawtooth", .07, .12); },
+  tick: () => tone(660, .12, "sine", .1),
+  go: () => { tone(1320, .35, "sine", .12); },
+  scan: () => tone(1500, .04, "sine", .03),
+  win: () => { [523, 659, 784, 1046, 1318].forEach((f, i) => tone(f, .22, "triangle", .09, i * .12)); },
+};
+function speak(text, opts = {}) {
+  if (!voiceOn || !("speechSynthesis" in window)) return;
+  try {
+    if (opts.interrupt !== false) speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text); u.lang = "it-IT"; if (itVoice) u.voice = itVoice;
+    u.rate = opts.rate || 1.08; u.pitch = 0.75; u.volume = 1; speechSynthesis.speak(u);
+  } catch (e) {}
+}
+const NUM = ["zero","uno","due","tre","quattro","cinque","sei","sette","otto","nove","dieci","undici","dodici","tredici","quattordici","quindici","sedici","diciassette","diciotto","diciannove","venti"];
 
+// ---------------- visuals ----------------
+let parts = [];
+function burst(color, n = 40) {
+  const w = fx.width, h = fx.height;
+  for (let i = 0; i < n; i++) { const a = Math.random() * 6.283, sp = (2 + Math.random() * 7) * devicePixelRatio;
+    parts.push({ x: w / 2, y: h * .45, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 2 * devicePixelRatio, life: 1, c: color, r: (2 + Math.random() * 3) * devicePixelRatio }); }
+}
+function drawFx() {
+  fctx.clearRect(0, 0, fx.width, fx.height);
+  parts = parts.filter(p => p.life > 0);
+  for (const p of parts) { p.x += p.vx; p.y += p.vy; p.vy += .15 * devicePixelRatio; p.life -= .022;
+    fctx.globalAlpha = Math.max(0, p.life); fctx.fillStyle = p.c; fctx.shadowColor = p.c; fctx.shadowBlur = 12;
+    fctx.beginPath(); fctx.arc(p.x, p.y, p.r, 0, 7); fctx.fill(); }
+  fctx.globalAlpha = 1; fctx.shadowBlur = 0;
+}
+function big(text, color = "#fff") { const b = $("big"); b.textContent = text; b.style.color = color; b.classList.remove("on"); void b.offsetWidth; b.classList.add("on"); }
+function flash() { const f = $("flash"); f.classList.remove("on"); void f.offsetWidth; f.classList.add("on"); }
+let lastMsgT = 0;
+function say(text, cls = "") { const m = $("msg"); m.textContent = text; m.className = cls; lastMsgT = performance.now(); }
+
+// ---------------- camera + model ----------------
 async function init() {
   const { PoseLandmarker, FilesetResolver } = await import(`https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@${VER}/vision_bundle.mjs`);
   const files = await FilesetResolver.forVisionTasks(`https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@${VER}/wasm`);
-  const opts = d => ({ baseOptions: { modelAssetPath: "https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_lite/float16/1/pose_landmarker_lite.task", delegate: d },
-                       runningMode: "VIDEO", numPoses: 1 });
+  const opts = d => ({ baseOptions: { modelAssetPath: "https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_lite/float16/1/pose_landmarker_lite.task", delegate: d }, runningMode: "VIDEO", numPoses: 1 });
   try { landmarker = await PoseLandmarker.createFromOptions(files, opts("GPU")); }
   catch (e) { landmarker = await PoseLandmarker.createFromOptions(files, opts("CPU")); }
 }
-
-let facing = "user";
 async function openCam() {
   if (video.srcObject) video.srcObject.getTracks().forEach(t => t.stop());
   const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: facing }, audio: false });
   video.srcObject = stream; await video.play();
   $("stage").classList.toggle("mirror", facing === "user");
 }
-async function start() {
-  $("err").textContent = ""; $("go").textContent = "ATTIVAZIONE…";
-  try {
-    await openCam();
-    if (!landmarker) await init();
-  } catch (e) {
-    $("go").textContent = "ATTIVA IL SISTEMA";
-    $("err").textContent = "Impossibile usare la fotocamera: consenti l'accesso nelle impostazioni del browser e riprova. (" + (e.name || e.message) + ")";
-    return;
-  }
-  $("start").classList.add("hide"); $("angle").classList.remove("hide"); $("flip").classList.remove("hide");
-  reset(); running = true; say("ENTRA NELL'INQUADRATURA"); requestAnimationFrame(loop);
-}
+
+// ---------------- game state ----------------
+// phase: scan -> countdown -> active -> done
+let phase = "scan", scanSince = 0, cdStart = 0, cdLast = -1;
+let state = "up", maxDepth = 0, hipBase = null, thighLen = null, smooth = null, leanWarn = false;
+let reps = 0, attempts = 0, gradesSum = 0, perfect = 0, best = 0, startT = 0;
 
 function reset() {
-  state = "up"; minAngle = 180; reps = 0; attempts = 0; gradesSum = 0; smooth = null;
-  $("reps").textContent = 0; $("target").textContent = TARGET; $("xp").style.width = "0%"; $("grade").textContent = "–"; $("grade").style.color = "#fff";
+  phase = "scan"; scanSince = 0; cdLast = -1; state = "up"; maxDepth = 0; hipBase = null; thighLen = null; smooth = null;
+  reps = 0; attempts = 0; gradesSum = 0; perfect = 0; best = 0;
+  $("reps").textContent = 0; $("target").textContent = TARGET; $("xp").style.width = "0%";
+  $("grade").textContent = "–"; $("grade").style.color = "#fff"; $("grade").style.textShadow = "none";
+  $("deg").textContent = "–"; $("dfill").style.height = "0";
 }
 
-function draw(lm, kneeAng, side) {
-  const w = cv.width, h = cv.height;
-  // video is object-fit:contain — map normalized coords to canvas with same cover transform
-  const vw = video.videoWidth, vh = video.videoHeight, s = Math.min(w / vw, h / vh);
+async function start() {
+  $("err").textContent = ""; $("go").textContent = "ATTIVAZIONE…";
+  initAudio(); speak("Sistema attivato.");
+  try { await openCam(); if (!landmarker) await init(); }
+  catch (e) {
+    $("go").textContent = "ATTIVA IL SISTEMA";
+    $("err").textContent = "Impossibile avviare il Sistema: consenti l'accesso alla fotocamera e riprova. (" + (e.name || e.message) + ")";
+    return;
+  }
+  ["start"].forEach(id => $(id).classList.add("hide"));
+  ["depth", "flip", "sound"].forEach(id => $(id).classList.remove("hide"));
+  reset(); running = true; say("ENTRA NELLA SAGOMA"); speak("Entra nella sagoma.", { interrupt: false });
+  requestAnimationFrame(loop);
+}
+
+// map landmark -> canvas (video is object-fit: contain)
+function mapper() {
+  const w = cv.width, h = cv.height, vw = video.videoWidth || 1, vh = video.videoHeight || 1, s = Math.min(w / vw, h / vh);
   const ox = (w - vw * s) / 2, oy = (h - vh * s) / 2;
-  const P = p => [ox + p.x * vw * s, oy + p.y * vh * s];
-  ctx.clearRect(0, 0, w, h);
+  return { P: p => [ox + p.x * vw * s, oy + p.y * vh * s], box: [ox, oy, vw * s, vh * s] };
+}
+
+function drawSkeleton(lm, color = "#6ff3ff") {
+  const { P } = mapper(), w = cv.width;
   const bones = [[11,12],[11,13],[13,15],[12,14],[14,16],[11,23],[12,24],[23,24],[23,25],[25,27],[24,26],[26,28],[27,31],[28,32]];
-  ctx.lineCap = "round"; ctx.shadowColor = "#6ff3ff"; ctx.shadowBlur = 18;
-  ctx.strokeStyle = "rgba(111,243,255,.95)"; ctx.lineWidth = Math.max(4, w / 160);
-  for (const [a, b] of bones) {
-    if (lm[a].visibility < .4 || lm[b].visibility < .4) continue;
-    const [x1, y1] = P(lm[a]), [x2, y2] = P(lm[b]);
-    ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
-  }
+  ctx.lineCap = "round"; ctx.shadowColor = color; ctx.shadowBlur = 18; ctx.strokeStyle = color; ctx.lineWidth = Math.max(4, w / 160);
+  for (const [a, b] of bones) { if (lm[a].visibility < .4 || lm[b].visibility < .4) continue;
+    const [x1, y1] = P(lm[a]), [x2, y2] = P(lm[b]); ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke(); }
   ctx.fillStyle = "#fff";
-  for (const i of [11,12,13,14,15,16,23,24,25,26,27,28]) {
-    if (lm[i].visibility < .4) continue; const [x, y] = P(lm[i]);
-    ctx.beginPath(); ctx.arc(x, y, Math.max(5, w / 140), 0, 7); ctx.fill();
-  }
-  // knee angle wedge
-  if (kneeAng != null) {
-    const [hp, kn, an] = side.map(i => P(lm[i]));
-    const a1 = Math.atan2(hp[1] - kn[1], hp[0] - kn[0]), a2 = Math.atan2(an[1] - kn[1], an[0] - kn[0]);
-    let start = a1, end = a2; let diff = end - start; while (diff > Math.PI) diff -= 2*Math.PI; while (diff < -Math.PI) diff += 2*Math.PI;
-    const good = kneeAng <= 100;
-    ctx.fillStyle = good ? "rgba(125,255,168,.35)" : "rgba(111,243,255,.25)";
-    ctx.shadowColor = good ? "#7dffa8" : "#6ff3ff";
-    ctx.beginPath(); ctx.moveTo(kn[0], kn[1]); ctx.arc(kn[0], kn[1], w / 7, start, start + diff, diff < 0); ctx.closePath(); ctx.fill();
-  }
+  for (const i of [0,11,12,13,14,15,16,23,24,25,26,27,28]) { if (lm[i].visibility < .4) continue; const [x, y] = P(lm[i]);
+    ctx.beginPath(); ctx.arc(x, y, Math.max(5, w / 140), 0, 7); ctx.fill(); }
   ctx.shadowBlur = 0;
+}
+
+function drawSilhouette(progress, t) {
+  // dashed body target in the middle of the camera picture
+  const { box } = mapper(); const [bx, by, bw, bh] = box;
+  const cx = bx + bw / 2, top = by + bh * .1, H = bh * .8, u = H / 8;
+  ctx.save();
+  const col = progress > 0 ? `rgba(125,255,168,${.6 + .4 * progress})` : `rgba(111,243,255,${.45 + .25 * Math.sin(t / 250)})`;
+  ctx.strokeStyle = col; ctx.lineWidth = Math.max(3, cv.width / 220); ctx.setLineDash([14, 10]); ctx.shadowColor = col; ctx.shadowBlur = 14;
+  ctx.beginPath(); ctx.arc(cx, top + u * .6, u * .6, 0, 7); ctx.stroke();                          // head
+  ctx.beginPath();                                                                                  // body outline
+  ctx.moveTo(cx - u * 1.3, top + u * 1.5); ctx.lineTo(cx + u * 1.3, top + u * 1.5);
+  ctx.lineTo(cx + u * 1.1, top + u * 4.2); ctx.lineTo(cx + u * .9, top + u * 8);
+  ctx.lineTo(cx + u * .2, top + u * 8); ctx.lineTo(cx, top + u * 4.6); ctx.lineTo(cx - u * .2, top + u * 8);
+  ctx.lineTo(cx - u * .9, top + u * 8); ctx.lineTo(cx - u * 1.1, top + u * 4.2); ctx.closePath(); ctx.stroke();
+  ctx.setLineDash([]);
+  if (progress > 0) { ctx.fillStyle = "rgba(125,255,168,.9)"; ctx.fillRect(cx - u * 1.5, top + H + u * .3, u * 3 * progress, u * .18); }
+  ctx.restore();
 }
 
 function loop() {
   if (!running) return;
-  if (cv.width !== innerWidth * devicePixelRatio) { cv.width = innerWidth * devicePixelRatio; cv.height = innerHeight * devicePixelRatio; }
+  const W = Math.round(innerWidth * devicePixelRatio), Hh = Math.round(innerHeight * devicePixelRatio);
+  if (cv.width !== W) { cv.width = fx.width = W; cv.height = fx.height = Hh; }
   const now = performance.now();
   if (video.readyState >= 2 && now !== lastTs) {
     lastTs = now;
     const res = landmarker.detectForVideo(video, now);
     const lm = res.landmarks && res.landmarks[0];
-    if (!lm) { ctx.clearRect(0, 0, cv.width, cv.height); if (now - lastMsgT > 800) say("ENTRA NELL'INQUADRATURA", "bad"); }
-    else process(lm, now);
+    ctx.clearRect(0, 0, cv.width, cv.height);
+    step(lm, now);
   }
+  drawFx();
   requestAnimationFrame(loop);
 }
 
-function process(lm, now) {
-  // pick the side with better visibility
-  const L = [23, 25, 27], R = [24, 26, 28];
-  const vis = s => s.reduce((t, i) => t + lm[i].visibility, 0);
-  const side = vis(L) >= vis(R) ? L : R;
-  const fullBody = vis(side) / 3 > .6 && lm[0].visibility > .5;
-  if (!fullBody) { draw(lm, null, side); if (now - lastMsgT > 800) say("ALLONTANATI: DEVO VEDERTI DALLA TESTA AI PIEDI", "bad"); return; }
-  const raw = angle(lm[side[0]], lm[side[1]], lm[side[2]]);
-  smooth = smooth == null ? raw : smooth * 0.6 + raw * 0.4;
-  const k = smooth;
-  $("deg").textContent = Math.round(k) + "°";
-  draw(lm, k, side);
+function bodyOk(lm) {
+  if (!lm) return false;
+  const ok = i => lm[i].visibility > .5;
+  return ok(0) && ok(23) && ok(24) && ok(25) && ok(26);
+}
 
-  // torso lean: shoulder-hip line vs vertical
+function calibrate(lm) {
+  const hipY = (lm[23].y + lm[24].y) / 2, kneeY = (lm[25].y + lm[26].y) / 2, th = Math.max(1e-3, kneeY - hipY);
+  hipBase = hipBase == null ? hipY : (hipY < hipBase ? hipY : hipBase * 0.97 + hipY * 0.03);
+  thighLen = thighLen == null ? th : Math.max(thighLen * 0.995, th);
+}
+
+function step(lm, now) {
+  if (phase === "scan") {
+    const ok = bodyOk(lm);
+    if (lm) drawSkeleton(lm, ok ? "#7dffa8" : "#6ff3ff");
+    if (ok) { if (!scanSince) { scanSince = now; } calibrate(lm); }
+    else { scanSince = 0; hipBase = null; thighLen = null; }
+    const prog = scanSince ? Math.min(1, (now - scanSince) / 1500) : 0;
+    drawSilhouette(prog, now);
+    if (ok && Math.floor(prog * 10) !== Math.floor(((now - 16 - scanSince) / 1500) * 10)) sfx.scan();
+    if (!ok && now - lastMsgT > 1200) say(lm ? "ALLONTANATI: DEVO VEDERTI DALLA TESTA ALLE GINOCCHIA" : "ENTRA NELLA SAGOMA", "bad");
+    if (ok && prog < 1 && now - lastMsgT > 700) say("SCANSIONE IN CORSO… RESTA FERMO");
+    if (prog >= 1) { phase = "countdown"; cdStart = now; cdLast = -1; say("GIOCATORE RILEVATO", "good"); speak("Giocatore rilevato. Preparati."); flash(); }
+    return;
+  }
+  if (phase === "countdown") {
+    if (lm) drawSkeleton(lm, "#7dffa8");
+    if (bodyOk(lm)) calibrate(lm);
+    const el = (now - cdStart) / 1000 - 1.3;            // leave time for the voice line
+    const n = 3 - Math.floor(el);
+    if (el >= 0 && n !== cdLast && n >= 1) { cdLast = n; big(String(n)); sfx.tick(); speak(NUM[n]); }
+    if (el >= 3) { phase = "active"; startT = now; big("VIA!", "#7dffa8"); sfx.go(); speak("Via!"); say("INIZIA LO SQUAT", "good"); }
+    return;
+  }
+  if (phase === "active") active(lm, now);
+}
+
+function active(lm, now) {
+  if (!bodyOk(lm)) { if (lm) drawSkeleton(lm); if (now - lastMsgT > 1000) say("ALLONTANATI: DEVO VEDERTI DALLA TESTA ALLE GINOCCHIA", "bad"); return; }
+  const hipY = (lm[23].y + lm[24].y) / 2;
+  if (state === "up") calibrate(lm);
+  const raw = Math.max(0, (hipY - hipBase) / thighLen);
+  smooth = smooth == null ? raw : smooth * 0.6 + raw * 0.4;
+  const dep = smooth, pct = Math.round(Math.min(1.2, dep) * 100);
+  $("deg").textContent = pct + "%"; $("dfill").style.height = Math.min(100, pct / 1.2 * 1.0) + "%";
+  drawSkeleton(lm, dep > 0.7 ? "#7dffa8" : "#6ff3ff");
+
+  const L = [23, 25, 27], R = [24, 26, 28];
+  const side = (lm[23].visibility + lm[25].visibility) >= (lm[24].visibility + lm[26].visibility) ? L : R;
+  const shW = Math.abs(lm[11].x - lm[12].x), torso = Math.abs(((lm[11].y + lm[12].y) / 2) - hipY) + 1e-3;
+  const sideView = shW < torso * 0.45;
   const sh = side === L ? lm[11] : lm[12], hp = lm[side[0]];
   const lean = Math.abs(Math.atan2(sh.x - hp.x, hp.y - sh.y) * 180 / Math.PI);
 
   if (state === "up") {
-    if (k < DOWN_START) { state = "down"; minAngle = k; leanWarn = false; }
-    else if (now - lastMsgT > 1500) say(reps === 0 ? "PRONTO. INIZIA LO SQUAT" : "CONTINUA, GIOCATORE");
+    if (dep > 0.25) { state = "down"; maxDepth = dep; leanWarn = false; }
+    else if (now - lastMsgT > 2000) say(reps === 0 ? "INIZIA LO SQUAT" : "CONTINUA, GIOCATORE");
   } else {
-    minAngle = Math.min(minAngle, k);
-    if (lean > 55) leanWarn = true;
-    if (k < 100 && now - lastMsgT > 600) say("BENE. ORA RISALI", "good");
-    if (k > UP) {                       // rep finished
+    maxDepth = Math.max(maxDepth, dep);
+    if (sideView && lean > 60) leanWarn = true;
+    if (dep > 0.7 && now - lastMsgT > 600) say("BENE. ORA RISALI", "good");
+    if (dep < 0.1) {
       state = "up"; attempts++;
-      const g = GRADES.find(([lim]) => minAngle <= lim);
-      if (leanWarn) { flashGrade("E", "#ff5a6e"); say("NON VALIDA: SCHIENA TROPPO INCLINATA", "bad"); }
-      else if (!g) { flashGrade("E", "#ff5a6e"); say("NON VALIDA: SCENDI DI PIÙ", "bad"); }
+      const g = DEPTH_GRADES.find(([lim]) => maxDepth >= lim);
+      if (leanWarn) { grade("E", "#ff5a6e"); say("NON VALIDA: SCHIENA TROPPO INCLINATA", "bad"); sfx.bad(); speak("Non valida. Schiena dritta."); }
+      else if (!g) { grade("E", "#ff5a6e"); say("NON VALIDA: SCENDI DI PIÙ", "bad"); sfx.bad(); speak("Non valida. Scendi di più."); }
       else {
-        reps++; gradesSum += g[3]; flashGrade(g[1], g[2]);
-        say(g[1] === "S" ? "RIPETIZIONE PERFETTA" : g[1] === "A" ? "RIPETIZIONE VALIDA" : "VALIDA, MA PUOI SCENDERE DI PIÙ", "good");
+        reps++; gradesSum += g[3]; best = Math.max(best, maxDepth); grade(g[1], g[2]);
         $("reps").textContent = reps; $("xp").style.width = (reps / TARGET * 100) + "%";
+        if (g[1] === "S") { perfect++; sfx.perfect(); burst("#ffe27a", 60); flash(); say("RIPETIZIONE PERFETTA", "good"); speak(NUM[reps] + ". Perfetta."); }
+        else { sfx.rep(); burst(g[2], 25); say(g[1] === "A" ? "RIPETIZIONE VALIDA" : "VALIDA, MA PUOI SCENDERE DI PIÙ", "good"); speak(NUM[reps]); }
         if (navigator.vibrate) navigator.vibrate(40);
-        if (reps >= TARGET) finish();
+        if (reps === TARGET - 5) setTimeout(() => speak("Ne mancano cinque.", { interrupt: false }), 700);
+        if (reps >= TARGET) finish(now);
       }
     }
   }
 }
 
-function flashGrade(letter, color) {
+function grade(letter, color) {
   const g = $("grade"); g.textContent = letter; g.style.color = color; g.style.textShadow = `0 0 18px ${color}`;
-  g.animate([{ transform: "scale(1.6)" }, { transform: "scale(1)" }], { duration: 300, easing: "ease-out" });
+  g.animate([{ transform: "scale(1.7)" }, { transform: "scale(1)" }], { duration: 300, easing: "ease-out" });
 }
 
-function finish() {
-  running = false;
-  const avg = gradesSum / reps, acc = Math.round(reps / attempts * 100);
-  const rank = avg >= 95 ? "S" : avg >= 82 ? "A" : avg >= 70 ? "B" : "C";
-  $("endrank").textContent = "RANGO " + rank;
-  $("endtxt").innerHTML = `${reps} squat validi su ${attempts} tentativi<br>Precisione: ${acc}% · +250 EXP`;
-  $("end").classList.remove("hide");
+// ---------------- result card ----------------
+function rankFrom(avg) { return avg >= 95 ? "S" : avg >= 82 ? "A" : avg >= 70 ? "B" : "C"; }
+const RCOL = { S: "#ffe27a", A: "#7dffa8", B: "#6ff3ff", C: "#9aa3b2" };
+
+async function makeCard(rank, acc, secs) {
+  try { await document.fonts.ready; } catch (e) {}
+  const c = document.createElement("canvas"); c.width = 1080; c.height = 1920; const g = c.getContext("2d");
+  const grd = g.createRadialGradient(540, 800, 50, 540, 800, 1300); grd.addColorStop(0, "#14244a"); grd.addColorStop(.7, "#070a14"); grd.addColorStop(1, "#020308");
+  g.fillStyle = grd; g.fillRect(0, 0, 1080, 1920);
+  g.strokeStyle = "rgba(63,169,255,.07)"; g.lineWidth = 2;
+  for (let y = 0; y < 1920; y += 120) { g.beginPath(); g.moveTo(0, y); g.lineTo(1080, y); g.stroke(); }
+  for (let x = 0; x < 1080; x += 120) { g.beginPath(); g.moveTo(x, 0); g.lineTo(x, 1920); g.stroke(); }
+  const col = RCOL[rank];
+  // panel
+  const px = 110, py = 330, pw = 860, ph = 1180;
+  g.fillStyle = "rgba(5,8,15,.88)"; roundRect(g, px, py, pw, ph, 22); g.fill();
+  g.shadowColor = col; g.shadowBlur = 30; g.strokeStyle = col; g.lineWidth = 6; roundRect(g, px, py, pw, ph, 22); g.stroke();
+  const br = (x, y, dx, dy) => { g.beginPath(); g.moveTo(x, y + dy * 50); g.lineTo(x, y); g.lineTo(x + dx * 50, y); g.stroke(); };
+  br(px - 22, py - 22, 1, 1); br(px + pw + 22, py - 22, -1, 1); br(px - 22, py + ph + 22, 1, -1); br(px + pw + 22, py + ph + 22, -1, -1);
+  g.shadowBlur = 0; g.textAlign = "center";
+  g.font = "900 64px Inter"; { const w1 = g.measureText("RANK").width, w2 = g.measureText("UP").width, x0 = 540 - (w1 + w2) / 2; g.textAlign = "left"; g.fillStyle = "#fff"; g.fillText("RANK", x0, 220); g.fillStyle = "#6ff3ff"; g.fillText("UP", x0 + w1, 220); g.textAlign = "center"; }
+  g.fillStyle = col; g.font = "800 30px Inter"; g.fillText("N O T I F I C A   D E L   S I S T E M A", 540, py + 90);
+  g.fillStyle = "#fff"; g.font = "900 66px Inter"; g.fillText("MISSIONE COMPLETATA", 540, py + 190);
+  g.fillStyle = "rgba(255,255,255,.25)"; g.fillRect(px + 70, py + 235, pw - 140, 3);
+  g.fillStyle = "#9fb6cc"; g.font = "800 40px Inter"; g.fillText("RANGO OTTENUTO", 540, py + 330);
+  g.shadowColor = col; g.shadowBlur = 50; g.fillStyle = col; g.font = "900 300px Inter"; g.fillText(rank, 540, py + 640); g.shadowBlur = 0;
+  const rows = [["Squat validi", `${reps} / ${attempts}`], ["Precisione", acc + "%"], ["Ripetizioni perfette", String(perfect)], ["Tempo", `${Math.floor(secs / 60)}:${String(secs % 60).padStart(2, "0")}`], ["Esperienza", "+250 EXP"]];
+  rows.forEach(([a, b], i) => { const y = py + 770 + i * 78; g.textAlign = "left"; g.fillStyle = "#e8f6ff"; g.font = "600 44px Inter"; g.fillText(a, px + 80, y);
+    g.textAlign = "right"; g.fillStyle = col; g.font = "800 44px Inter"; g.fillText(b, px + pw - 80, y); });
+  g.textAlign = "center"; g.fillStyle = "#fff"; g.font = "900 52px Inter"; g.fillText("Batti il mio rango.", 540, 1650);
+  g.fillStyle = "#6ff3ff"; g.font = "800 40px Inter"; g.fillText("@rankup.irl  ·  rankup-irl.github.io", 540, 1730);
+  g.fillStyle = "#64788c"; g.font = "600 30px Inter"; g.fillText(new Date().toLocaleDateString("it-IT", { day: "numeric", month: "long", year: "numeric" }), 540, 1800);
+  return c;
+}
+function roundRect(g, x, y, w, h, r) { g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r); g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath(); }
+
+let cardBlob = null;
+async function finish(now) {
+  running = false; phase = "done";
+  const avg = gradesSum / reps, acc = Math.round(reps / attempts * 100), secs = Math.round((now - startT) / 1000), rank = rankFrom(avg);
+  sfx.win(); burst("#ffe27a", 120); flash(); drawFx();
+  speak(`Missione completata. Rango ${rank}. Precisione ${acc} per cento.`);
+  const c = await makeCard(rank, acc, secs);
+  $("card").src = c.toDataURL("image/png");
+  c.toBlob(b => { cardBlob = b; }, "image/png");
+  setTimeout(() => $("end").classList.remove("hide"), 900);
 }
 
+$("share").onclick = async () => {
+  try {
+    const file = cardBlob && new File([cardBlob], "rankup-carta.png", { type: "image/png" });
+    if (file && navigator.canShare && navigator.canShare({ files: [file] })) {
+      await navigator.share({ files: [file], text: "Il Sistema mi ha valutato. Batti il mio rango ⚔️ @rankup.irl" });
+    } else { $("sharehint").textContent = "Il tuo browser non permette la condivisione diretta: tieni premuta l'immagine e scegli \"Salva nelle foto\"."; }
+  } catch (e) {}
+};
 $("go").onclick = start;
-$("flip").onclick = async () => { facing = facing === "user" ? "environment" : "user"; try { await openCam(); smooth = null; say(facing === "user" ? "FOTOCAMERA FRONTALE" : "FOTOCAMERA POSTERIORE"); } catch (e) { say("FOTOCAMERA NON DISPONIBILE", "bad"); } };
-$("again").onclick = () => { $("end").classList.add("hide"); reset(); running = true; say("PRONTO. INIZIA LO SQUAT"); requestAnimationFrame(loop); };
+$("again").onclick = () => { $("end").classList.add("hide"); reset(); running = true; say("ENTRA NELLA SAGOMA"); speak("Nuova missione. Entra nella sagoma."); requestAnimationFrame(loop); };
+$("flip").onclick = async () => { facing = facing === "user" ? "environment" : "user"; try { await openCam(); smooth = null; } catch (e) { say("FOTOCAMERA NON DISPONIBILE", "bad"); } };
+$("sound").onclick = () => { voiceOn = !voiceOn; $("sound").textContent = voiceOn ? "🔊 VOCE ON" : "🔇 VOCE OFF"; if (!voiceOn) try { speechSynthesis.cancel(); } catch (e) {} };
+
+// preview of the result card: open the page with #card to see it without training
+if (location.hash === "#card") {
+  reps = 18; attempts = 20; perfect = 7;
+  makeCard("A", 90, 74).then(c => { $("card").src = c.toDataURL("image/png"); c.toBlob(b => cardBlob = b); $("start").classList.add("hide"); $("end").classList.remove("hide"); });
+}
 </script>
 </body>
 </html>
