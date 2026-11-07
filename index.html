@@ -116,6 +116,35 @@ input{width:100%;font:inherit;font-weight:800;font-size:22px;text-align:center;c
 @keyframes pop{0%{opacity:0;transform:scale(1.8)}20%{opacity:1;transform:scale(1)}80%{opacity:1}100%{opacity:0;transform:scale(.9)}}
 #cflash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none}#cflash.on{animation:fl .25s ease-out}
 @keyframes fl{0%{opacity:.55}100%{opacity:0}}
+
+/* ===== GUIDA: tutorial + missione un esercizio alla volta ===== */
+#guide{position:fixed;inset:0;z-index:30;display:none;overflow-y:auto;background:radial-gradient(ellipse at 50% 30%,#12203f 0%,#070a14 60%,#020308 100%)}
+#guide.on{display:block}
+#guide .gin{max-width:460px;margin:0 auto;padding:calc(env(safe-area-inset-top) + 14px) 18px calc(env(safe-area-inset-bottom) + 24px)}
+.gtop{display:flex;justify-content:space-between;align-items:center;font-size:11px;font-weight:800;letter-spacing:.2em;color:var(--a)}
+.gtop button{font:inherit;font-size:12px;letter-spacing:.08em;color:var(--m);background:none;border:0;cursor:pointer;padding:6px}
+.gdots{display:flex;gap:6px;margin:10px 0 2px}.gdots i{flex:1;height:4px;border-radius:2px;background:rgba(111,243,255,.18)}.gdots i.on{background:var(--a);box-shadow:0 0 8px var(--a)}.gdots i.ok{background:var(--ok)}
+.gname{text-align:center;font-weight:900;font-size:30px;letter-spacing:.03em;color:#fff;margin:14px 0 2px;text-shadow:0 0 14px rgba(111,243,255,.6)}
+.gtarget{text-align:center;font-weight:800;color:var(--g);font-size:17px;letter-spacing:.06em}
+.gdemo{display:block;width:100%;max-width:300px;aspect-ratio:1;margin:10px auto 4px;border:1.5px solid rgba(111,243,255,.35);border-radius:14px;background:rgba(0,0,0,.25)}
+.gdemo-cap{text-align:center;font-size:11px;letter-spacing:.2em;color:var(--m);font-weight:800}
+.gcues{list-style:none;margin:14px 0 0;padding:0;display:grid;gap:8px}
+.gcues li{background:rgba(111,243,255,.06);border:1px solid rgba(111,243,255,.25);border-radius:10px;padding:10px 12px;font-weight:700;font-size:15px;line-height:1.35}
+.gcues li b{color:var(--a)}
+.gmode{display:flex;justify-content:center;margin-top:14px}.gmode span{font-size:12px;font-weight:800;letter-spacing:.12em;padding:6px 12px;border-radius:999px;border:1px solid var(--a);color:var(--a)}
+.gmode span.man{border-color:var(--g);color:var(--g)}
+.gsec{display:block;width:100%;margin-top:10px;padding:12px;font:inherit;font-weight:800;font-size:13px;letter-spacing:.1em;color:var(--m);background:none;border:1px solid rgba(138,164,189,.35);border-radius:9px;cursor:pointer}
+.gman{display:grid;gap:12px;margin-top:10px}
+.gman .num{text-align:center;font-size:96px;font-weight:900;line-height:1;text-shadow:0 0 24px var(--a)}.gman .num small{font-size:28px;color:var(--m)}
+.gman .tap{width:100%;min-height:150px;font:inherit;font-weight:900;font-size:34px;letter-spacing:.1em;color:#03050b;background:linear-gradient(180deg,var(--a),#a9f8ff);border:0;border-radius:16px;box-shadow:0 0 24px rgba(111,243,255,.45);cursor:pointer}
+.gman .tap:active{transform:scale(.98)}
+.gphone{display:flex;align-items:flex-end;justify-content:center;gap:18px;margin:12px 0 4px;height:150px}
+.gphone .ph{width:34px;height:62px;border:3px solid var(--a);border-radius:7px;box-shadow:0 0 12px var(--a);position:relative}
+.gphone .ph:after{content:"";position:absolute;left:8px;right:8px;top:4px;height:3px;border-radius:2px;background:var(--a)}
+.gphone .dist{flex:0 0 110px;border-top:2px dashed var(--g);position:relative;margin-bottom:6px}.gphone .dist b{position:absolute;left:0;right:0;top:-24px;text-align:center;color:var(--g);font-size:15px}
+.gphone .man{width:120px;height:120px;border:0;background:none}
+.qgo{margin-top:6px!important}
+.row .n.tapdemo{cursor:pointer;text-decoration:underline dotted rgba(111,243,255,.6);text-underline-offset:4px}
 </style>
 </head>
 <body>
@@ -170,6 +199,7 @@ input{width:100%;font:inherit;font-weight:800;font-size:22px;text-align:center;c
       <div class="tag"><i>!</i>AVVISO</div>
       <div class="title">MISSIONE DI PENALITÀ</div><hr>
       <p class="lead" style="margin-bottom:6px">Hai saltato la missione di ieri. La serie è stata azzerata.</p>
+      <button class="btn big qgo" id="pgo" style="background:linear-gradient(90deg,var(--r),#ffb0b0)">▶ SCONTA LA PENALITÀ</button>
       <div id="penrows"></div>
       <div class="warn">NON PUOI RIFIUTARE</div>
     </div>
@@ -177,6 +207,7 @@ input{width:100%;font:inherit;font-weight:800;font-size:22px;text-align:center;c
     <div class="win" id="qwin">
       <div class="tag"><i>!</i>NOTIFICA DEL SISTEMA</div>
       <div class="title">MISSIONE GIORNALIERA</div><hr>
+      <button class="btn big qgo" id="qgo">▶ INIZIA LA MISSIONE</button>
       <div id="qrows"></div>
       <div class="timer"><span>Tempo rimasto</span><b id="clock">--:--:--</b></div>
       <div class="warn" id="qwarn">SE FALLISCI: PENALITÀ</div>
@@ -205,6 +236,10 @@ input{width:100%;font:inherit;font-weight:800;font-size:22px;text-align:center;c
   <div class="huge" id="ovhuge">+250 EXP</div>
   <button class="btn big" id="ovok">CONTINUA</button>
 </div></div>
+
+
+<!-- GUIDA (tutorial + missione guidata) -->
+<div id="guide"><div class="gin" id="gin"></div></div>
 
 <!-- TIMER -->
 <div id="tmr">
@@ -281,7 +316,7 @@ function rowsHtml(rows, kind) {
       else ctr += `<button class="btn sm" ${d} data-a="1">+1</button><button class="btn sm" ${d} data-a="5">+5</button>`;
       ctr += `<button class="btn sm" ${d} data-a="all">✓</button>`;
     }
-    return `<div class="row${done ? " done" : ""}"><div class="n">${name}${r.ai ? `<em>👁 ${r.ai}</em>` : ""}</div><div class="v">${done ? "✓ " : ""}${r.done} / ${r.target}${unit}</div>` +
+    return `<div class="row${done ? " done" : ""}"><div class="n tapdemo" data-demo="${kind}:${i}">${name}${r.ai ? `<em>👁 ${r.ai}</em>` : ""}</div><div class="v">${done ? "✓ " : ""}${r.done} / ${r.target}${unit}</div>` +
       (ctr ? `<div class="ctr">${ctr}</div>` : "") + `</div>`;
   }).join("");
 }
@@ -299,6 +334,7 @@ function render() {
   $("penwin").classList.toggle("hide", !pen); if (pen) $("penrows").innerHTML = rowsHtml(S.penalty, "p");
   $("qwin").style.opacity = pen ? .35 : 1; $("qwin").style.pointerEvents = pen ? "none" : "auto";
   $("qrows").innerHTML = rowsHtml(S.quest, "q");
+  $("qgo").classList.toggle("hide", !!S.qdone); $("qgo").textContent = S.quest.some(r => r.done > 0) ? "▶ CONTINUA LA MISSIONE" : "▶ INIZIA LA MISSIONE";
   $("qwarn").textContent = S.qdone ? "MISSIONE COMPLETATA ✓" : "SE FALLISCI: PENALITÀ";
   $("qwarn").style.color = S.qdone ? "var(--ok)" : ""; $("qwarn").style.animation = S.qdone ? "none" : "";
   const st = S.stats, g = S.lastGain || {};
@@ -353,12 +389,14 @@ $("start").onclick = () => {
   const name = $("iname").value.trim() || "Giocatore", sq = Math.max(0, parseInt($("ipush").value || "0", 10)), p = Math.round(sq * 0.8), lv = startLevel(p);
   S = { name, goal: pickedGoal, lv, xp: 0, streak: 0, day: null, qdone: false, quest: [], penalty: null, stats: { f: 10 + Math.round(p / 5), a: 8, r: 7, d: 5 }, lastGain: null, verified: 0, accSum: 0, accN: 0 };
   newDay(); render();
+  if (!S.tut) { startTutorial(sq, lv); return; }
   overlay("GIOCATORE REGISTRATO", `Percorso: ${GOALS[pickedGoal].ic} ${GOALS[pickedGoal].name}<br>Test: ${sq} squat in 30 secondi. La tua prima missione è pronta.<br>Usa 👁 per far verificare gli squat al Sistema.`, "RANGO " + rankOf(lv)[0], false);
 };
 $("ovok").onclick = () => $("ov").classList.remove("on");
 
 // ================= DEMO =================
 $("demolink").onclick = () => $("demobox").classList.toggle("on");
+if (!/[?&#]demo/.test(location.href)) document.querySelector(".demo").classList.add("hide");
 $("dDone").onclick = () => { if (!S) return; S.penalty = null; S.quest.forEach(r => r.done = r.target); completeQuest(); };
 $("dSkip").onclick = () => { if (!S) return; scrollTo(0, 0); S.qdone = false; offset++; newDay(); render(); overlay("MISSIONE FALLITA", "Hai ignorato la missione giornaliera.<br>Il Sistema non perdona.", "PENALITÀ", false); };
 $("dNext").onclick = () => { if (!S) return; if (!S.qdone) { S.quest.forEach(r => r.done = r.target); S.qdone = true; S.streak++; } offset++; newDay(); render(); };
@@ -392,10 +430,10 @@ function tTick() {
   const doneSec = tTotal - tLeft; tRow.done = Math.min(tRow.target, tRow.target - tTotal + doneSec);
   if (tLeft === 10 && tTotal > 15) speak("Dieci secondi."); if (tLeft <= 3 && tLeft > 0) { sfx.tick(); speak(numIt(tLeft)); }
   if (tLeft <= 0) { clearInterval(tInt); sfx.win(); speak("Completato."); tRow.done = tRow.target; store.set(S);
-    setTimeout(() => { $("tmr").classList.remove("on"); render(); checkDone(tKind); }, 900); }
+    setTimeout(() => { $("tmr").classList.remove("on"); render(); if (GD.on) { guideAfter(); return; } checkDone(tKind); }, 900); }
 }
 $("tpause").onclick = () => { tPaused = !tPaused; $("tpause").textContent = tPaused ? "▶ RIPRENDI" : "❚❚ PAUSA"; $("tmsg").textContent = tPaused ? "In pausa." : "Il Sistema sta contando. Non fermarti."; };
-$("tstop").onclick = () => { clearInterval(tInt); try { speechSynthesis.cancel(); } catch (e) {} store.set(S); $("tmr").classList.remove("on"); render(); checkDone(tKind); };
+$("tstop").onclick = () => { clearInterval(tInt); try { speechSynthesis.cancel(); } catch (e) {} store.set(S); $("tmr").classList.remove("on"); render(); if (GD.on) { guideAfter(null, true); return; } checkDone(tKind); };
 
 // ================= CAMERA MODE (AI counter) =================
 const VER = "0.10.14";
@@ -581,11 +619,172 @@ function finishCam() {
   const acc = Math.round(reps / attempts * 100);
   sfx.win(); burst("#ffe27a", 120); flash(); speak(`Esercizio completato. Precisione ${acc} per cento.`);
   saveCam(); const kind = camKind; reps = 0;
-  setTimeout(() => { closeCam(); render(); if (!checkDone(kind)) overlay("ESERCIZIO VERIFICATO", `Il Sistema ha verificato le tue ripetizioni.<br>Precisione: ${acc}% · Perfette: ${perfect}`, "👁 ✓"); }, 1600);
+  setTimeout(() => { closeCam(); render(); if (GD.on) { guideAfter(acc); return; } if (!checkDone(kind)) overlay("ESERCIZIO VERIFICATO", `Il Sistema ha verificato le tue ripetizioni.<br>Precisione: ${acc}% · Perfette: ${perfect}`, "👁 ✓"); }, 1600);
 }
-$("cexit").onclick = () => { saveCam(); const kind = camKind, done = reps; reps = 0; closeCam(); render(); if (done) checkDone(kind); };
+$("cexit").onclick = () => { saveCam(); const kind = camKind, done = reps; reps = 0; closeCam(); render(); if (GD.on) { guideAfter(null, true); return; } if (done) checkDone(kind); };
 $("cflip").onclick = async () => { facing = facing === "user" ? "environment" : "user"; try { await openCam(); smooth = null; } catch (e) { say("FOTOCAMERA NON DISPONIBILE", "bad"); } };
 $("cvoice").onclick = () => { voiceOn = !voiceOn; $("cvoice").textContent = voiceOn ? "🔊" : "🔇"; if (!voiceOn) try { speechSynthesis.cancel(); } catch (e) {} };
+
+// ================= GUIDA: dimostrazioni animate =================
+const EXINFO = {
+  squat:  { cues: ["Piedi larghi come le spalle", "Scendi finché le <b>cosce sono parallele</b> al pavimento", "Schiena dritta, talloni sempre a terra"], view: "fronte" },
+  jj:     { cues: ["Salta <b>aprendo gambe e braccia</b>", "Mani che si toccano <b>sopra la testa</b>", "Salta di nuovo e richiudi: questo è 1"], view: "fronte" },
+  mc:     { cues: ["Posizione da flessione, <b>braccia tese</b>", "Porta un <b>ginocchio al petto</b>, poi l'altro, veloce", "Ogni ginocchio vale 1"], view: "lato" },
+  run:    { cues: ["Corri sul posto <b>alzando le ginocchia</b>", "Le braccia accompagnano il movimento", "Il timer conta per te"], view: "fronte" },
+  push:   { cues: ["Corpo dritto <b>dalla testa ai talloni</b>", "Scendi con il petto quasi a terra, poi spingi su", "Troppo difficile? <b>Ginocchia a terra</b>"], view: "lato" },
+  lunge:  { cues: ["Fai un <b>passo avanti</b> e scendi", "Il ginocchio dietro arriva <b>quasi a terra</b>", "Torna su e cambia gamba: ogni gamba vale 1"], view: "lato" },
+  plank:  { cues: ["<b>Avambracci a terra</b>, gomiti sotto le spalle", "Corpo dritto: <b>non alzare il sedere</b>", "Pancia in dentro e respira. Il timer conta per te"], view: "lato" },
+  burpee: { cues: ["Scendi e <b>appoggia le mani</b> a terra", "Gambe indietro in posizione da flessione", "Torna su e fai un <b>salto</b>: questo è 1"], view: "lato" },
+};
+// pose: [hd, nk, sl, sr, el, er, hl, hr, pl, pr, kl, kr, fl, fr] in a 100x100 box, ground at y=90
+const J = ["hd","nk","sl","sr","el","er","hl","hr","pl","pr","kl","kr","fl","fr"];
+const P_ = a => Object.fromEntries(J.map((k, i) => [k, a[i]]));
+const STAND_F = P_([[50,14],[50,24],[41,27],[59,27],[37,41],[63,41],[36,54],[64,54],[45,53],[55,53],[45,71],[55,71],[45,90],[55,90]]);
+const POSES = {
+  squat: [[STAND_F, 700], [P_([[50,32],[50,42],[41,45],[59,45],[38,54],[62,54],[45,56],[55,56],[43,67],[57,67],[35,74],[65,74],[42,90],[58,90]]), 700]],
+  jj: [[STAND_F, 380], [P_([[50,12],[50,22],[41,25],[59,25],[32,14],[68,14],[38,3],[62,3],[44,51],[56,51],[37,70],[63,70],[31,90],[69,90]]), 380]],
+  run: [[P_([[50,14],[50,24],[41,27],[59,27],[44,38],[60,40],[50,34],[62,52],[45,53],[55,53],[45,60],[55,71],[47,74],[55,90]]), 320],
+        [P_([[50,14],[50,24],[41,27],[59,27],[40,40],[56,38],[38,52],[50,34],[45,53],[55,53],[45,71],[55,60],[45,90],[53,74]]), 320]],
+  push: [[P_([[16,57],[22,61],[26,63],[27,63],[26,76],[27,76],[26,90],[27,90],[58,72],[59,72],[74,80],[75,80],[90,88],[91,88]]), 650],
+         [P_([[16,77],[22,80],[26,81],[27,81],[37,80],[38,80],[26,90],[27,90],[58,83],[59,83],[74,86],[75,86],[90,88],[91,88]]), 650]],
+  plank: [[P_([[16,67],[22,71],[26,73],[27,73],[26,89],[27,89],[40,89],[41,89],[58,77],[59,77],[74,82],[75,82],[90,88],[91,88]]), 1200],
+          [P_([[16,66],[22,70],[26,72],[27,72],[26,89],[27,89],[40,89],[41,89],[58,75],[59,75],[74,81],[75,81],[90,88],[91,88]]), 1200]],
+  mc: [[P_([[16,57],[22,61],[26,63],[27,63],[26,76],[27,76],[26,90],[27,90],[56,70],[57,70],[42,74],[74,80],[52,86],[91,88]]), 300],
+       [P_([[16,57],[22,61],[26,63],[27,63],[26,76],[27,76],[26,90],[27,90],[56,70],[57,70],[74,80],[42,74],[90,88],[52,86]]), 300]],
+  lunge: [[P_([[50,14],[50,24],[50,27],[51,27],[50,40],[51,40],[52,52],[53,52],[50,53],[51,53],[50,71],[51,71],[50,90],[51,90]]), 600],
+          [P_([[50,28],[50,38],[50,41],[51,41],[50,53],[51,53],[52,62],[53,62],[50,64],[51,64],[64,72],[40,84],[64,90],[28,90]]), 700]],
+  burpee: [[P_([[50,14],[50,24],[50,27],[51,27],[50,40],[51,40],[52,52],[53,52],[50,53],[51,53],[50,71],[51,71],[50,90],[51,90]]), 380],
+           [P_([[36,52],[40,58],[42,60],[43,60],[38,74],[39,74],[36,90],[37,90],[58,66],[59,66],[46,72],[47,72],[54,90],[55,90]]), 380],
+           [P_([[16,57],[22,61],[26,63],[27,63],[26,76],[27,76],[26,90],[27,90],[58,72],[59,72],[74,80],[75,80],[90,88],[91,88]]), 380],
+           [P_([[36,52],[40,58],[42,60],[43,60],[38,74],[39,74],[36,90],[37,90],[58,66],[59,66],[46,72],[47,72],[54,90],[55,90]]), 380],
+           [P_([[50,6],[50,16],[50,19],[51,19],[49,8],[50,8],[48,-2],[49,-2],[50,45],[51,45],[50,63],[51,63],[50,82],[51,82]]), 380]],
+};
+let demoRaf = 0;
+function playDemo(canvas, id) {
+  cancelAnimationFrame(demoRaf);
+  const kf = POSES[id] || POSES.squat; const c = canvas.getContext("2d");
+  const dpr = Math.min(2, devicePixelRatio || 1), size = canvas.clientWidth || 280; canvas.width = canvas.height = Math.round(size * dpr);
+  const total = kf.reduce((t, k) => t + k[1], 0); const t0 = performance.now(); const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const ease = x => x < .5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2;
+  const frame = (now) => {
+    let t = reduce ? kf[0][1] * .99 : (now - t0) % total, i = 0; while (t > kf[i][1]) { t -= kf[i][1]; i++; }
+    const a = kf[i][0], b = kf[(i + 1) % kf.length][0], e = ease(t / kf[i][1]);
+    const p = Object.fromEntries(J.map(k => [k, [a[k][0] + (b[k][0] - a[k][0]) * e, a[k][1] + (b[k][1] - a[k][1]) * e]]));
+    const s = canvas.width / 100, X = q => [q[0] * s, (q[1] + 4) * s];
+    c.clearRect(0, 0, canvas.width, canvas.height);
+    c.strokeStyle = "rgba(111,243,255,.25)"; c.lineWidth = s * .6; c.beginPath(); c.moveTo(6 * s, 94.5 * s); c.lineTo(94 * s, 94.5 * s); c.stroke();
+    const line = (u, v, col, w) => { const [x1, y1] = X(p[u]), [x2, y2] = X(p[v]); c.strokeStyle = col; c.lineWidth = w; c.beginPath(); c.moveTo(x1, y1); c.lineTo(x2, y2); c.stroke(); };
+    c.lineCap = "round"; c.shadowColor = "#6ff3ff"; c.shadowBlur = 14 * dpr;
+    const far = "rgba(111,243,255,.45)", near = "#6ff3ff", W = s * 2.6;
+    [["sr","er"],["er","hr"],["pr","kr"],["kr","fr"]].forEach(([u, v]) => line(u, v, far, W));
+    const mid = k => [(p[k + "l"][0] + p[k + "r"][0]) / 2, (p[k + "l"][1] + p[k + "r"][1]) / 2];
+    p.sm = mid("s"); p.pm = mid("p");
+    [["nk","sl"],["nk","sr"],["nk","pm"],["pl","pr"]].forEach(([u, v]) => line(u, v, near, W));
+    [["sl","el"],["el","hl"],["pl","kl"],["kl","fl"]].forEach(([u, v]) => line(u, v, near, W));
+    const [hx, hy] = X(p.hd); c.fillStyle = "#6ff3ff"; c.beginPath(); c.arc(hx, hy, s * 5.2, 0, 7); c.fill();
+    c.shadowBlur = 0; c.fillStyle = "#fff"; ["el","er","hl","hr","kl","kr","pl","pr"].forEach(k => { const [x, y] = X(p[k]); c.beginPath(); c.arc(x, y, s * 1.3, 0, 7); c.fill(); });
+    demoRaf = requestAnimationFrame(frame);
+  };
+  demoRaf = requestAnimationFrame(frame);
+}
+
+// ================= GUIDA: flusso =================
+const GD = { on: false, mode: "quest", kind: "q", idx: 0, tut: 0, manual: false, trial: null };
+const gin = () => $("gin");
+const rowsOf = k => k === "p" ? S.penalty : S.quest;
+const unit = r => TIME_EXERCISES[r.id] ? "secondi" : "ripetizioni";
+function guideOpen(kind, idx) {
+  GD.on = true; GD.mode = "quest"; GD.kind = kind; GD.manual = false;
+  const rows = rowsOf(kind); GD.idx = idx != null ? idx : Math.max(0, rows.findIndex(r => r.done < r.target));
+  $("guide").classList.add("on"); document.body.style.overflow = "hidden"; guideRender();
+}
+function guideClose() { GD.on = false; cancelAnimationFrame(demoRaf); $("guide").classList.remove("on"); document.body.style.overflow = ""; render(); }
+function dots(rows, idx) { return `<div class="gdots">${rows.map((r, i) => `<i class="${r.done >= r.target ? "ok" : i === idx ? "on" : ""}"></i>`).join("")}</div>`; }
+function guideRender() {
+  const rows = rowsOf(GD.kind), r = rows[GD.idx]; if (!r) return guideClose();
+  const info = EXINFO[r.id] || { cues: [], view: "fronte" }, ai = AI_EXERCISES[r.id], time = TIME_EXERCISES[r.id];
+  const left = r.target - r.done, name = r.name.replace(" (sec)", "");
+  const head = `<div class="gtop"><span>${GD.kind === "p" ? "PENALITÀ" : "MISSIONE"} · ESERCIZIO ${GD.idx + 1} DI ${rows.length}</span><button type="button" id="gx">✕ ESCI</button></div>${dots(rows, GD.idx)}`;
+  if (GD.manual) {
+    gin().innerHTML = head + `<div class="gname">${name.toUpperCase()}</div><div class="gman"><div class="num"><span id="gmn">${r.done}</span><small> / ${r.target}</small></div>
+      <button class="tap" type="button" id="gtap">+1</button><div style="display:flex;gap:10px"><button class="btn" style="flex:1;padding:14px" id="gplus5">+5</button><button class="btn" style="flex:1;padding:14px" id="gall">✓ FATTO TUTTO</button></div>
+      <p class="lead">Tocca il pulsante grande a ogni ripetizione.</p></div>`;
+    const upd = () => { $("gmn").textContent = r.done; store.set(S); if (r.done >= r.target) { tone && tone(1320, .2, "sine", .1); setTimeout(() => guideAfter(), 350); } };
+    $("gtap").onclick = () => { initAudio(); if (r.done < r.target) { r.done++; tone(880, .06); if (navigator.vibrate) navigator.vibrate(20); upd(); } };
+    $("gplus5").onclick = () => { r.done = Math.min(r.target, r.done + 5); upd(); };
+    $("gall").onclick = () => { r.done = r.target; upd(); };
+    $("gx").onclick = guideClose; return;
+  }
+  const how = ai ? `<span>👁 CONTA IL SISTEMA CON LA FOTOCAMERA</span>` : time ? `<span>⏱ IL TIMER CONTA PER TE</span>` : `<span class="man">✋ CONTI TU, TOCCANDO LO SCHERMO</span>`;
+  gin().innerHTML = head + `<div class="gname">${name.toUpperCase()}</div><div class="gtarget">${left} ${unit(r)}${r.done ? ` (fatte ${r.done})` : ""}</div>
+    <canvas class="gdemo" id="gdemo" aria-label="Dimostrazione animata: ${name}"></canvas><div class="gdemo-cap">COME SI FA · VISTA DI ${info.view.toUpperCase()}</div>
+    <ul class="gcues">${info.cues.map(c => `<li>${c}</li>`).join("")}</ul>
+    <div class="gmode">${how}</div>
+    <button class="btn big" type="button" id="ggo">${ai ? "👁 VIA: CONTA IL SISTEMA" : time ? "▶ AVVIA IL TIMER" : "▶ INIZIA"}</button>
+    ${ai ? `<button class="gsec" type="button" id="gman">PREFERISCO CONTARE DA SOLO</button>` : ""}
+    <button class="gsec" type="button" id="gskip">SALTA PER ORA</button>`;
+  playDemo($("gdemo"), r.id);
+  $("gx").onclick = guideClose;
+  $("ggo").onclick = () => { cancelAnimationFrame(demoRaf); initAudio(); if (ai) openCamera(r, GD.kind); else if (time) openTimer(r, GD.kind); else { GD.manual = true; guideRender(); } };
+  if (ai) $("gman").onclick = () => { GD.manual = true; guideRender(); };
+  $("gskip").onclick = () => guideNext(true);
+}
+function guideNext(skip) {
+  const rows = rowsOf(GD.kind); GD.manual = false;
+  for (let k = 1; k <= rows.length; k++) { const j = (GD.idx + k) % rows.length; if (rows[j].done < rows[j].target && !(skip && j === GD.idx)) { GD.idx = j; return guideRender(); } }
+  // nothing left
+  const kind = GD.kind; const all = rows.every(r => r.done >= r.target); guideClose();
+  if (all) { const wasPen = kind === "p"; checkDone(kind); if (wasPen) setTimeout(() => {}, 0); }
+}
+function guideAfter(acc, aborted) {
+  if (GD.mode === "tut") return tutorialAfterTrial(aborted);
+  const r = rowsOf(GD.kind)[GD.idx]; GD.manual = false;
+  if (aborted && r.done < r.target) return guideRender();
+  guideNext(false);
+}
+$("qgo").onclick = () => guideOpen("q");
+$("pgo").onclick = () => guideOpen("p");
+document.addEventListener("click", e => { const d = e.target.closest("[data-demo]"); if (!d || !S) return; const [k, i] = d.dataset.demo.split(":"); guideOpen(k, +i); });
+
+// ================= TUTORIAL (prima volta) =================
+let TUT = null;
+function startTutorial(sq, lv) {
+  TUT = { sq, lv, step: 0, trialOk: false }; GD.on = true; GD.mode = "tut"; GD.manual = false;
+  $("guide").classList.add("on"); document.body.style.overflow = "hidden"; tutRender();
+}
+function tutRender() {
+  const st = TUT.step, steps = 4;
+  const head = `<div class="gtop"><span>TUTORIAL · ${st + 1} DI ${steps}</span><button type="button" id="gx">SALTA</button></div><div class="gdots">${Array.from({ length: steps }, (_, i) => `<i class="${i < st ? "ok" : i === st ? "on" : ""}"></i>`).join("")}</div>`;
+  let body = "";
+  if (st === 0) body = `<div class="gname">BENVENUTO, ${esc(S.name).toUpperCase()}</div><div class="gtarget">RANGO DI PARTENZA: ${rankOf(TUT.lv)[0]}</div>
+    <p class="lead" style="margin-top:14px">Ogni giorno il Sistema ti dà una <b style="color:#fff">missione di 4 esercizi</b>. Li fai uno alla volta: prima vedi come si fanno, poi tocca a te.</p>
+    <ul class="gcues"><li>✅ Completi la missione: <b>guadagni EXP</b> e sali di livello</li><li>❌ La salti: domani arriva la <b>penalità</b></li><li>👁 Su squat e jumping jack <b>conta il Sistema</b> con la fotocamera</li></ul>
+    <button class="btn big" id="tn">AVANTI</button>`;
+  if (st === 1) body = `<div class="gname">COSÌ SI FA LO SQUAT</div><div class="gtarget">GUARDA LO SCHELETRO</div>
+    <canvas class="gdemo" id="gdemo" aria-label="Dimostrazione animata dello squat"></canvas><div class="gdemo-cap">QUESTO È QUELLO CHE VEDE IL SISTEMA</div>
+    <ul class="gcues">${EXINFO.squat.cues.map(c => `<li>${c}</li>`).join("")}</ul><button class="btn big" id="tn">HO CAPITO</button>`;
+  if (st === 2) body = `<div class="gname">POSIZIONA IL TELEFONO</div>
+    <div class="gphone" aria-hidden="true"><div class="ph"></div><div class="dist"><b>2 METRI</b></div><canvas class="man" id="gman2"></canvas></div>
+    <ul class="gcues"><li>📱 Appoggia il telefono <b>a terra, in verticale</b>, contro un muro o un oggetto</li><li>🧍 Allontanati di <b>2 metri</b>: il Sistema deve vederti dalla testa ai piedi</li><li>💡 Meglio con la <b>luce davanti</b> a te, non dietro</li><li>🟩 Entra nella <b>sagoma tratteggiata</b>: quando diventa verde, il Sistema ti ha visto</li></ul>
+    <button class="btn big" id="tn">AVANTI</button>`;
+  if (st === 3) body = TUT.trialOk
+    ? `<div class="gname" style="color:var(--ok)">PERFETTO. SEI PRONTO.</div><p class="lead">Il Sistema ti vede e conta le tue ripetizioni. Ora la missione di oggi.</p><button class="btn big" id="tgo">▶ INIZIA LA MISSIONE</button><button class="gsec" id="tlater">LA FACCIO PIÙ TARDI</button>`
+    : `<div class="gname">PROVA: 3 SQUAT</div><p class="lead">Facciamo una prova veloce con la fotocamera. Non conta per la missione: serve solo a vedere che il Sistema ti riconosce.</p>
+    <canvas class="gdemo" id="gdemo" aria-label="Dimostrazione animata dello squat"></canvas>
+    <button class="btn big" id="ttry">👁 PROVA ORA</button><button class="gsec" id="tskip">SALTA LA PROVA</button>`;
+  gin().innerHTML = head + body;
+  if ($("gdemo")) playDemo($("gdemo"), "squat"); else cancelAnimationFrame(demoRaf);
+  if ($("gman2")) { const c = $("gman2"); playDemo(c, "squat"); }
+  $("gx").onclick = () => tutEnd(false);
+  if ($("tn")) $("tn").onclick = () => { TUT.step++; tutRender(); };
+  if ($("ttry")) $("ttry").onclick = () => { initAudio(); GD.trial = { id: "squat", name: "Squat di prova", target: 3, done: 0, ai: 0 }; openCamera(GD.trial, "t"); };
+  if ($("tskip")) $("tskip").onclick = () => { TUT.trialOk = true; tutRender(); };
+  if ($("tgo")) $("tgo").onclick = () => { tutEnd(true); };
+  if ($("tlater")) $("tlater").onclick = () => tutEnd();
+}
+function tutorialAfterTrial(aborted) { TUT.trialOk = !aborted && GD.trial && GD.trial.done >= 1; if (!TUT.trialOk) TUT.step = 3; tutRender(); if (!TUT.trialOk) { const p = document.querySelector("#gin .lead"); if (p) p.textContent = "La prova non è finita. Controlla di essere a 2 metri e con tutto il corpo nell'inquadratura, poi riprova."; } }
+function tutEnd(startQuest) { S.tut = true; store.set(S); GD.on = false; GD.mode = "quest"; cancelAnimationFrame(demoRaf); $("guide").classList.remove("on"); document.body.style.overflow = ""; render(); if (startQuest) guideOpen("q"); }
+const esc = t => String(t).replace(/[&<>"]/g, ch => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[ch]));
 </script>
 </body>
 </html>
