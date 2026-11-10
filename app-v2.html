@@ -266,6 +266,17 @@ input::placeholder{color:var(--m2)}
 .rprev b{display:block;font-size:16px}.rprev small{color:var(--m);font-size:13px}
 .reveal-L{font-family:var(--disp);font-weight:800;font-size:170px;line-height:1;text-align:center;transition:color .15s}
 #pfx{position:fixed;inset:0;pointer-events:none;z-index:80}
+.chips{display:flex;flex-wrap:wrap;gap:10px}
+.chips button{flex:1;min-width:90px;padding:16px 10px;border-radius:16px;border:1px solid var(--hair);background:var(--card);color:var(--t);font:700 15px var(--f, Inter, sans-serif);cursor:pointer;transition:all .2s var(--ease)}
+.chips button.on{border-color:var(--a);background:rgba(111,243,255,.12);box-shadow:0 0 20px rgba(111,243,255,.2);color:#fff}
+.chk{display:flex;gap:10px;align-items:center;font-size:14px;color:var(--t);margin:0;padding:6px 0;min-height:44px;cursor:pointer}
+.chk input{width:22px;height:22px;accent-color:var(--a);flex:none;padding:0}
+.plansum{margin-top:6px;padding:14px 16px;border-radius:18px;background:var(--card);border:1px solid var(--hair);text-align:left;font-size:14px;line-height:1.6;color:var(--t)}
+.plansum b{color:var(--a)}
+.plancard{padding:18px;border-radius:24px;border:1px solid rgba(255,226,122,.3);background:linear-gradient(160deg,rgba(255,226,122,.10),rgba(255,255,255,.03));margin:10px 0 0}
+.plancard .kick{color:var(--g)}.ptitle{font-family:var(--disp);font-weight:800;font-size:19px;letter-spacing:-.02em;margin-top:6px}
+.pday{font:800 22px var(--disp);color:var(--g)}
+#pbar{background:linear-gradient(90deg,#ffb347,var(--g))!important;box-shadow:0 0 14px rgba(255,226,122,.5)!important}
 /* home da gioco */
 .hud-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:6px 0 14px}
 .me{display:flex;align-items:center;gap:12px}.me .pname{font-family:var(--disp);font-size:16px}.me .plv{margin:2px 0 0}
@@ -335,7 +346,7 @@ input::placeholder{color:var(--m2)}
 
   <!-- RISVEGLIO (onboarding da gioco) -->
   <section id="onb">
-    <div class="aw-dots" id="awdots"><i></i><i></i><i></i><i></i><i></i></div>
+    <div class="aw-dots" id="awdots"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
     <div class="aw" data-s="0">
       <div class="kick">Sistema · connessione</div>
       <div class="term" id="term"></div>
@@ -354,11 +365,30 @@ input::placeholder{color:var(--m2)}
       <button class="btn cta" id="n1" disabled>Conferma</button>
     </div>
     <div class="aw" data-s="2">
-      <div class="kick">Scelta del percorso</div>
-      <div class="big-t" style="font-size:34px">Che giocatore<br>vuoi diventare?</div>
+      <div class="kick">Obiettivo dei prossimi 30 giorni</div>
+      <div class="big-t" style="font-size:32px">Cosa vuoi<br>conquistare?</div>
       <div class="pcards" id="goals"></div>
     </div>
     <div class="aw" data-s="3">
+      <div class="kick">Il tuo corpo</div>
+      <div class="big-t" style="font-size:30px">Calibriamo<br>il Sistema.</div>
+      <p class="sub" style="font-size:14px">Serve solo a scegliere esercizi adatti a te. I dati restano sul tuo telefono.</p>
+      <div class="rprev" style="flex-direction:column;align-items:stretch;gap:6px"><div class="xprow" style="margin:0"><span>ALTEZZA</span><b id="hv" style="color:var(--t)">172 cm</b></div><input type="range" class="rng" id="ih" min="140" max="210" value="172" aria-label="Altezza in centimetri"></div>
+      <div class="rprev" style="flex-direction:column;align-items:stretch;gap:6px"><div class="xprow" style="margin:0"><span>PESO</span><b id="wv" style="color:var(--t)">70 kg</b></div><input type="range" class="rng" id="iw" min="40" max="160" value="70" aria-label="Peso in chilogrammi"></div>
+      <label class="chk"><input type="checkbox" id="nobody"> Preferisco non indicarli</label>
+      <label class="chk"><input type="checkbox" id="adult"> Confermo di avere almeno 18 anni</label>
+      <button class="btn cta" id="n3" disabled>Continua</button>
+    </div>
+    <div class="aw" data-s="4">
+      <div class="kick">Tempo e limiti</div>
+      <div class="big-t" style="font-size:30px">Quanto tempo hai<br>ogni giorno?</div>
+      <div class="chips" id="mins"><button type="button" data-m="5">5 min</button><button type="button" data-m="10" class="on">10 min</button><button type="button" data-m="15">15 min</button></div>
+      <div class="kick" style="margin-top:6px">Hai fastidi a…</div>
+      <div class="chips" id="limits"><button type="button" data-l="knees">Ginocchia</button><button type="button" data-l="back">Schiena</button><button type="button" data-l="none" class="on">Nessuno</button></div>
+      <p class="fine" style="text-align:left">Se hai dolori, problemi di salute o non ti alleni da tempo, parla prima con un medico.</p>
+      <button class="btn cta" id="n4">Continua</button>
+    </div>
+    <div class="aw" data-s="5">
       <div class="kick">Valutazione iniziale</div>
       <div class="big-t" style="font-size:30px">Quanti squat fai<br>in 30 secondi?</div>
       <div class="stepper"><button type="button" id="sqm" aria-label="Meno">−</button><div class="bignum" id="sqn">10</div><button type="button" id="sqp" aria-label="Più">+</button></div>
@@ -367,11 +397,12 @@ input::placeholder{color:var(--m2)}
       <p class="fine" style="text-align:left">Non lo sai? <a href="rango.html" style="color:var(--a)">Fai il test con la fotocamera</a>. Esercizi generici, non sostituiscono un medico: se senti dolore, fermati.</p>
       <button class="btn cta" id="start">Valuta il mio rango</button>
     </div>
-    <div class="aw" data-s="4" style="text-align:center">
+    <div class="aw" data-s="6" style="text-align:center">
       <div class="kick">Valutazione completata</div>
       <div class="reveal-L" id="rvL">E</div>
       <div class="big-t" style="font-size:30px" id="rvT">Rango E</div>
       <p class="sub" id="rvS"></p>
+      <div class="plansum" id="rvPlan" style="opacity:0;transition:opacity .5s"></div>
       <button class="btn cta pulse" id="rvGo" style="opacity:0;transition:opacity .5s">Inizia la prima missione</button>
     </div>
   </section>
@@ -401,6 +432,12 @@ input::placeholder{color:var(--m2)}
       <div id="penrows"></div>
       <button class="btn big qgo" id="pgo" style="background:linear-gradient(90deg,var(--r),#ffb0b0)">Sconta la penalità</button>
       <div class="warn">NON PUOI RIFIUTARE</div>
+    </div>
+
+    <div class="plancard hide" id="plancard">
+      <div class="qtop"><div><div class="kick">Piano personale · 30 giorni</div><div class="ptitle" id="pgoal">Obiettivo</div></div><div class="pday" id="pday">1/30</div></div>
+      <div class="bar big" style="margin:12px 0 8px"><div id="pbar"></div></div>
+      <div class="xprow" style="margin:0"><span id="pinfo"></span><span id="ptoday"></span></div>
     </div>
 
     <div class="quest" id="qwin">
@@ -504,15 +541,34 @@ const rankOf = l => { let r = RANKS[0]; for (const x of RANKS) if (l >= x[1]) r 
 const startLevel = p => p >= 100 ? 50 : p > 60 ? 35 : p > 40 ? 20 : p > 25 ? 10 : p > 10 ? 5 : 1;
 
 function buildQuest() {
+  if (S.plan) return buildPlanQuest();
   const m = MULT[rankOf(S.lv)[0]], pool = GOALS[S.goal].ex, rest = pool.slice(1);
   const n = Math.floor(Date.parse(today()) / 864e5), pick = [pool[0]];
   for (let k = 0; k < 3; k++) pick.push(rest[(n + k) % rest.length]);   // rotazione giornaliera
   const adj = S.adj || 1;   // regolazione data dal giocatore ("facile" / "dura")
   return pick.map(([id, name, base]) => ({ id, name, target: Math.max(1, Math.round(base * m * adj)), done: 0, ai: 0 }));
 }
+// Missione dal piano personale: esercizio dell'obiettivo + rotazione tra quelli permessi, quantità per rango, "facile/dura" e settimana del piano
+function buildPlanQuest() {
+  const p = S.plan, d = planDay(), m = MULT[rankOf(S.lv)[0]], adj = S.adj || 1, week = Math.min(3, Math.floor(d / 7));
+  const prog = (1 + .08 * week) * (p.lowImpact ? .85 : 1), excl = new Set(p.excl);
+  S.rec = d % 7 === 6;
+  if (S.rec) {   // giorno di recupero: leggero, senza penalità
+    const easy = [["plank", "Plank (sec)", 20], ["bridge", "Ponte glutei", 10]].concat(excl.has("crunch") ? [] : [["crunch", "Crunch", 8]]);
+    return easy.map(([id, name, base]) => ({ id, name, target: Math.max(1, Math.round(base * Math.min(m, 2))), done: 0, ai: 0 }));
+  }
+  const n = { 5: 3, 10: 4, 15: 5 }[p.minutes] || 4;
+  const pathPool = GOALS[OBJ[p.obj].path].ex.map(e => e[0]);
+  const ok = ALLEX.filter(e => !excl.has(e[0]) && e[0] !== p.key), allowed = ok.filter(e => pathPool.includes(e[0])).concat(ok.filter(e => !pathPool.includes(e[0])));   // prima quelli del percorso
+  const keyEx = ALLEX.find(e => e[0] === p.key), pick = [keyEx];
+  for (let k = 0; pick.length < n && k < allowed.length; k++) pick.push(allowed[(d + k) % allowed.length]);
+  return pick.map(([id, name, base]) => ({ id, name, target: Math.max(1, Math.round(base * m * adj * prog)), done: 0, ai: 0 }));
+}
 function newDay() {
   const t = today(); if (S.day === t) return;
-  if (S.day && (!S.qdone || dayDiff(S.day, t) > 1)) { const pm = MULT[rankOf(S.lv)[0]]; S.penalty = PENALTY.map(([id, name, v]) => ({ id, name, target: Math.min(30, Math.round(v * pm)), done: 0, ai: 0 })); S.streak = 0; }
+  if (S.day && !S.rec && (!S.qdone || dayDiff(S.day, t) > 1)) { const pm = MULT[rankOf(S.lv)[0]], ex = new Set(S.plan ? S.plan.excl : []);
+    const pen = ex.has("burpee") ? (ex.has("lunge") ? [["plank", "Plank (sec)", 30]] : [["squat", "Squat", 20]]) : PENALTY;   // penalità senza salti per chi ha limiti
+    S.penalty = pen.map(([id, name, v]) => ({ id, name, target: Math.min(id === "plank" ? 60 : 30, Math.round(v * pm)), done: 0, ai: 0 })); S.streak = 0; }
   S.day = t; S.qdone = false; S.lastGain = null; S.quest = buildQuest(); store.set(S);
 }
 
@@ -579,6 +635,12 @@ function render() {
   const st = S.stats, g = S.lastGain || {};
   $("stats").innerHTML = [["FORZA", "f"], ["AGILITÀ", "a"], ["RESISTENZA", "r"], ["DISCIPLINA", "d"]].map(([n, k]) => `<div class="stat"><small>${n}</small><b>${st[k]}</b>${g[k] ? `<em>+${g[k]}</em>` : ""}</div>`).join("") +
     `<div class="stat"><small>RIPETIZIONI VERIFICATE</small><b>${S.verified || 0}</b></div><div class="stat"><small>PRECISIONE MEDIA</small><b>${S.accN ? Math.round(S.accSum / S.accN) + "%" : "–"}</b></div>`;
+  // piano personale nella home
+  $("plancard").classList.toggle("hide", !S.plan);
+  if (S.plan) { const d = planDay(), day = Math.min(30, d + 1);
+    $("pgoal").textContent = OBJ[S.plan.obj].ic + " " + OBJ[S.plan.obj].t; $("pday").textContent = day + "/30"; $("pbar").style.width = (day / 30 * 100) + "%";
+    $("pinfo").textContent = "Settimana " + Math.min(4, Math.floor(d / 7) + 1) + " · " + S.plan.minutes + " min"; $("ptoday").textContent = S.rec ? "Oggi: recupero" : "Oggi: missione";
+    if (d >= 29) $("ptoday").textContent = "Giorno 30: rifai il test!"; }
   // v2: emblema, prossimo rango, fiamma, radar
   $("memb").style.setProperty("--rc", col);
   const nx = RANKS.find(x => x[1] > S.lv); $("nextrk").textContent = nx ? `Rango ${nx[0]} al livello ${nx[1]}` : "Rango massimo";
@@ -664,12 +726,50 @@ $("aw0").onclick = () => { initAudio(); [880, 1320].forEach((f, i) => tone(f, .1
 $("iname").oninput = () => { const v = $("iname").value.trim(); $("embL").textContent = v ? v[0].toUpperCase() : "?"; $("n1").disabled = v.length < 2; if (v.length === 2) tone(1320, .05, "sine", .04); };
 $("iname").onkeydown = e => { if (e.key === "Enter" && !$("n1").disabled) $("n1").click(); };
 $("n1").onclick = () => { tone(990, .1, "triangle", .06); buzz(15); awGo(2); };
-const PROFILE = { brucia: { Forza: 40, Agilità: 85, Resistenza: 70 }, forza: { Forza: 92, Agilità: 45, Resistenza: 55 }, resistenza: { Forza: 55, Agilità: 60, Resistenza: 92 } };
-$("goals").innerHTML = Object.entries(GOALS).map(([k, g]) => `<div class="pcard" data-g="${k}"><div class="ic">${g.ic}</div><div><b>${g.name}</b><small>${g.desc}</small>` +
-  Object.entries(PROFILE[k]).map(([n, v]) => `<div class="sbar"><span>${n.toUpperCase()}</span><i><b style="--w:${v}%"></b></i></div>`).join("") + `</div></div>`).join("");
-$("goals").onclick = e => { const g = e.target.closest(".pcard"); if (!g) return; pickedGoal = g.dataset.g;
+// ---------- obiettivo dei 30 giorni ----------
+const OBJ = {
+  push20:  { t: "Fare 20 flessioni di fila", ic: "💪", path: "forza", key: "push", d: "Petto, braccia e spalle più forti" },
+  light:   { t: "Sentirmi più leggero e definito", ic: "🔥", path: "brucia", key: "mc", d: "Movimento, fiato e tonicità" },
+  stairs:  { t: "Fare le scale senza fiatone", ic: "⚡", path: "resistenza", key: "jj", d: "Più fiato e più energia" },
+  squat50: { t: "Fare 50 squat senza fermarmi", ic: "🦵", path: "forza", key: "squat", d: "Gambe e glutei più forti" },
+};
+let pickedObj = null, pickedMin = 10, pickedLimits = [];
+$("goals").innerHTML = Object.entries(OBJ).map(([k, o]) => `<div class="pcard" data-g="${k}"><div class="ic">${o.ic}</div><div><b style="font-size:16px">${o.t}</b><small style="margin:4px 0 0">${o.d}</small></div></div>`).join("");
+$("goals").onclick = e => { const g = e.target.closest(".pcard"); if (!g) return; pickedObj = g.dataset.g; pickedGoal = OBJ[pickedObj].path;
   document.querySelectorAll(".pcard").forEach(x => x.classList.toggle("on", x === g)); tone(1175, .1, "triangle", .07); buzz(25);
-  setTimeout(() => awGo(3), 900); };
+  setTimeout(() => awGo(3), 700); };
+// ---------- corpo (facoltativo) e maggiore età ----------
+const adultOk = () => { $("n3").disabled = !$("adult").checked; };
+$("ih").oninput = () => { $("hv").textContent = $("ih").value + " cm"; };
+$("iw").oninput = () => { $("wv").textContent = $("iw").value + " kg"; };
+$("nobody").onchange = () => { const off = $("nobody").checked; ["ih", "iw"].forEach(i => $(i).disabled = off); ["hv", "wv"].forEach(i => $(i).style.opacity = off ? .3 : 1); };
+$("adult").onchange = adultOk;
+$("n3").onclick = () => { tone(990, .1, "triangle", .06); buzz(15); awGo(4); };
+// ---------- tempo e fastidi ----------
+$("mins").onclick = e => { const b = e.target.closest("button"); if (!b) return; pickedMin = +b.dataset.m; $("mins").querySelectorAll("button").forEach(x => x.classList.toggle("on", x === b)); tone(1100, .05, "sine", .04); buzz(10); };
+$("limits").onclick = e => { const b = e.target.closest("button"); if (!b) return; const l = b.dataset.l, all = [...$("limits").querySelectorAll("button")];
+  if (l === "none") { all.forEach(x => x.classList.toggle("on", x === b)); } else { b.classList.toggle("on"); all.find(x => x.dataset.l === "none").classList.toggle("on", !all.some(x => x.dataset.l !== "none" && x.classList.contains("on"))); }
+  pickedLimits = all.filter(x => x.classList.contains("on") && x.dataset.l !== "none").map(x => x.dataset.l); tone(1100, .05, "sine", .04); buzz(10); };
+$("n4").onclick = () => { tone(990, .1, "triangle", .06); buzz(15); awGo(5); };
+// ---------- generatore del piano personale ----------
+// Regole del coach: niente salti con fastidi alle ginocchia o peso elevato (IMC >= 30); niente burpees e crunch con fastidi alla schiena;
+// l'esercizio dell'obiettivo ogni giorno; 3/4/5 esercizi per 5/10/15 minuti; +8% a settimana; 1 giorno di recupero ogni 7, senza penalità.
+function makePlan() {
+  const noBody = $("nobody").checked, h = noBody ? null : +$("ih").value, w = noBody ? null : +$("iw").value;
+  const bmi = h && w ? w / ((h / 100) ** 2) : null, excl = new Set();
+  if (pickedLimits.includes("knees") || (bmi && bmi >= 30)) ["jj", "burpee", "run"].forEach(x => excl.add(x));
+  if (pickedLimits.includes("knees")) excl.add("lunge");
+  if (pickedLimits.includes("back")) ["burpee", "crunch"].forEach(x => excl.add(x));
+  const o = OBJ[pickedObj || "squat50"]; let key = o.key; if (excl.has(key)) key = excl.has("lunge") ? "bridge" : "squat";
+  return { obj: pickedObj || "squat50", key, minutes: pickedMin, limits: pickedLimits, excl: [...excl], lowImpact: excl.has("jj"), h, w, start: today() };
+}
+function planDay() { return S.plan ? Math.max(0, dayDiff(S.plan.start, today())) : 0; }
+const ALLEX = [["squat", "Squat", 15], ["push", "Flessioni", 8], ["lunge", "Affondi", 10], ["plank", "Plank (sec)", 30], ["burpee", "Burpees", 6], ["jj", "Jumping jack", 25], ["mc", "Mountain climber", 20], ["run", "Corsa sul posto (sec)", 45], ["bridge", "Ponte glutei", 12], ["crunch", "Crunch", 12]];
+function planText(p) {
+  const n = { 5: 3, 10: 4, 15: 5 }[p.minutes] || 4, o = OBJ[p.obj];
+  return `<b>Obiettivo:</b> ${o.t}<br><b>Ogni giorno:</b> ${n} esercizi, circa ${p.minutes} minuti, con ${ALLEX.find(e => e[0] === p.key)[1].toLowerCase()} sempre presente<br>` +
+    `<b>Settimana:</b> 6 giorni di missione + 1 di recupero<br><b>Progressione:</b> +8% a settimana per 4 settimane` + (p.lowImpact ? `<br><b>Basso impatto:</b> niente salti, per proteggere le articolazioni` : "") + (p.limits.includes("back") ? `<br><b>Schiena:</b> niente burpees e crunch` : "");
+}
 function setSq(v) { v = Math.max(0, Math.min(40, v | 0)); $("ipush").value = v; $("sqn").textContent = v + (v >= 40 ? "+" : "");
   const [L, lv] = rankFromSq(v), c = rcol(L); $("rpL").textContent = L; $("rpL").style.color = c; $("rpT").textContent = RTITLES[L]; $("rpS").textContent = `Rango di partenza · livello ${lv}`;
   $("rprev").style.borderColor = c; $("rprev").style.boxShadow = `0 0 24px ${c}33`; }
@@ -678,14 +778,14 @@ $("sqm").onclick = () => { setSq(+$("ipush").value - 1); buzz(8); }; $("sqp").on
 try { const t = JSON.parse(localStorage.getItem("rankup-rango") || "null"); setSq(t && t.reps >= 0 ? t.reps : 10); } catch (_) { setSq(10); }
 $("start").onclick = () => {
   initAudio(); const name = $("iname").value.trim() || "Giocatore", sq = +$("ipush").value, [L, lv] = rankFromSq(sq), p = Math.round(sq * .8);
-  S = { name, goal: pickedGoal || "forza", lv, xp: 0, streak: 0, day: null, qdone: false, quest: [], penalty: null, stats: { f: 10 + Math.round(p / 5), a: 8, r: 7, d: 5 }, lastGain: null, verified: 0, accSum: 0, accN: 0, tut: true };
-  newDay(); store.set(S); awGo(4);
+  S = { name, goal: pickedGoal || "forza", lv, xp: 0, streak: 0, day: null, qdone: false, quest: [], penalty: null, stats: { f: 10 + Math.round(p / 5), a: 8, r: 7, d: 5 }, lastGain: null, verified: 0, accSum: 0, accN: 0, tut: true, plan: makePlan() };
+  newDay(); store.set(S); awGo(6); $("rvPlan").style.opacity = 0; $("rvPlan").innerHTML = planText(S.plan);
   // rivelazione: le lettere girano e si fermano sul rango
   const ORDER = ["E", "D", "C", "B", "A", "S"]; let k = 0, delay = 60; $("rvGo").style.opacity = 0; $("rvT").textContent = "Il Sistema sta valutando…"; $("rvS").textContent = "";
   const spin = () => { const X = ORDER[k++ % 6]; $("rvL").textContent = X; $("rvL").style.color = rcol(X); tone(500 + (k % 6) * 90, .04, "square", .03);
     if (delay < 260) { delay *= 1.13; setTimeout(spin, delay); return; }
     $("rvL").textContent = L; $("rvL").style.color = rcol(L); $("rvL").style.textShadow = `0 0 50px ${rcol(L)}`;
-    $("rvT").textContent = `Rango ${L} · ${RTITLES[L]}`; $("rvS").textContent = `Livello ${lv} · percorso ${GOALS[S.goal].name.toLowerCase()} · la tua prima missione è pronta.`;
+    $("rvT").textContent = `Rango ${L} · ${RTITLES[L]}`; $("rvS").textContent = `Livello ${lv}. Il Sistema ha creato il tuo piano personale:`; $("rvPlan").style.opacity = 1;
     const r = $("rvL").getBoundingClientRect(); pburst(r.left + r.width / 2, r.top + r.height / 2, rcol(L), 120); pburst(r.left + r.width / 2, r.top + r.height / 2, "#ffffff", 30);
     [523, 659, 784, 1046, 1318].forEach((f, i) => tone(f, .25, "triangle", .08, i * .09)); buzz([60, 40, 140]); $("rvGo").style.opacity = 1; };
   setTimeout(spin, 400);
@@ -695,7 +795,7 @@ if (!S) { awGo(0); setTimeout(typeAwake, 300); }
 // grafico a radar delle statistiche
 function drawRadar(st) {
   const c = $("radar"); if (!c || !c.clientWidth) return; const d = Math.min(2, devicePixelRatio || 1), s = c.clientWidth; c.width = c.height = s * d; const g = c.getContext("2d"); g.scale(d, d);
-  const keys = [["FORZA", "f"], ["AGILITÀ", "a"], ["RESISTENZA", "r"], ["DISCIPLINA", "d"]], max = Math.max(30, ...keys.map(k => st[k[1]])), cx = s / 2, cy = s / 2, R = s * .34;
+  const keys = [["FORZA", "f"], ["AGILITÀ", "a"], ["RESISTENZA", "r"], ["DISCIPLINA", "d"]], max = Math.max(30, ...keys.map(k => st[k[1]])), cx = s / 2, cy = s / 2, R = s * .28;
   const pt = (i, v) => { const a = -Math.PI / 2 + i * Math.PI / 2; return [cx + Math.cos(a) * R * v, cy + Math.sin(a) * R * v]; };
   g.strokeStyle = "rgba(255,255,255,.08)"; g.lineWidth = 1;
   for (const lv of [.25, .5, .75, 1]) { g.beginPath(); keys.forEach((_, i) => { const [x, y] = pt(i, lv); i ? g.lineTo(x, y) : g.moveTo(x, y); }); g.closePath(); g.stroke(); }
@@ -1098,13 +1198,19 @@ function playRig(canvas, id) {
 }
 // Dimostrazioni con persone reali (video Pexels, licenza gratuita), controllate dal coach. Velocità ridotta dove il movimento è rapido.
 const EXVIDEO = { squat: 1, push: .9, lunge: 1, plank: 1, burpee: .7, jj: .75, mc: .55, run: .8, bridge: .9, crunch: .9 };
+// Inquadratura di ogni video: punto in cui sta la persona (x, y in %) e ingrandimento, così il protagonista resta al centro
+// quarto valore "c": video verticale mostrato intero (contain), così si vede tutta la persona dalla testa ai piedi
+const EXFRAME = { burpee: [84, 64, 1.9], squat: [42, 35, 1.05], push: [50, 50, 1, "c"], plank: [50, 50, 1, "c"], bridge: [50, 50, 1, "c"], crunch: [50, 50, 1], lunge: [50, 50, 1, "c"], run: [50, 50, 1, "c"] };
 function playVideoDemo(canvas, id) {
-  const old = canvas.parentNode.querySelector("video.gdemo"); if (old) old.remove();
-  const v = document.createElement("video"); v.className = "gdemo"; v.src = "esercizi/" + id + ".mp4"; v.muted = true; v.loop = true; v.autoplay = true; v.playsInline = true;
+  const old = canvas.parentNode.querySelector(".gvwrap"); if (old) old.remove();
+  const [fx, fy, z, fit] = EXFRAME[id] || [50, 50, 1];
+  const wrap = document.createElement("div"); wrap.className = "gdemo gvwrap";
+  wrap.style.cssText = "position:relative;overflow:hidden;border:1px solid rgba(111,243,255,.35);box-shadow:0 0 30px rgba(111,243,255,.12)";
+  const v = document.createElement("video"); v.src = "esercizi/" + id + ".mp4"; v.muted = true; v.loop = true; v.autoplay = true; v.playsInline = true;
   v.setAttribute("playsinline", ""); v.setAttribute("aria-label", "Video dimostrativo dell'esercizio");
-  v.style.cssText = "object-fit:cover;filter:saturate(.85) contrast(1.05) brightness(.92);border:1px solid rgba(111,243,255,.35);box-shadow:0 0 30px rgba(111,243,255,.12)";
+  v.style.cssText = `position:absolute;inset:0;width:100%;height:100%;object-fit:${fit === "c" ? "contain" : "cover"};background:#0b0f16;object-position:${fx}% ${fy}%;transform:scale(${z});transform-origin:${fx}% ${fy}%;filter:saturate(.85) contrast(1.05) brightness(.92)`;
   v.addEventListener("loadedmetadata", () => { v.playbackRate = EXVIDEO[id]; v.play().catch(() => {}); });
-  canvas.style.display = "none"; canvas.after(v);
+  wrap.appendChild(v); canvas.style.display = "none"; canvas.after(wrap);
   const cap = canvas.parentNode.querySelector(".gdemo-cap"); if (cap) cap.textContent = EXVIDEO[id] < 1 ? "COME SI FA · VIDEO RALLENTATO" : "COME SI FA · VIDEO DIMOSTRATIVO";
 }
 function playDemo(canvas, id) {
