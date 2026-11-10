@@ -111,6 +111,8 @@ input::placeholder{color:var(--m2)}
 .demo{margin-top:28px;text-align:center}.demo a{color:var(--m2);font-size:12px;cursor:pointer;text-decoration:underline}
 .demo .box{display:none;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:10px}.demo .box.on{display:flex}
 .hide{display:none!important}
+.feel{margin-top:16px;padding-top:14px;border-top:1px solid var(--hair)}.feel p{color:var(--t);font-weight:600;margin-bottom:10px}
+.feel div{display:flex;gap:8px}.feel .btn{flex:1;padding:12px 6px;min-height:44px}
 
 /* ---------- timer ---------- */
 #tmr{position:fixed;inset:0;z-index:45;display:none;place-items:center;background:var(--bg);padding:24px}
@@ -334,6 +336,7 @@ input::placeholder{color:var(--m2)}
       <div class="stats" id="stats"></div>
     </div>
 
+    <button class="btn big hide" id="chatOpen" type="button">💬 Parla con il Sistema</button>
     <p class="fine"><a href="privacy.html" style="color:var(--m2)">Privacy e salute</a></p>
 
     <div class="demo"><a id="demolink">modalità demo</a>
@@ -417,7 +420,8 @@ function buildQuest() {
   const m = MULT[rankOf(S.lv)[0]], pool = GOALS[S.goal].ex, rest = pool.slice(1);
   const n = Math.floor(Date.parse(today()) / 864e5), pick = [pool[0]];
   for (let k = 0; k < 3; k++) pick.push(rest[(n + k) % rest.length]);   // rotazione giornaliera
-  return pick.map(([id, name, base]) => ({ id, name, target: Math.round(base * m), done: 0, ai: 0 }));
+  const adj = S.adj || 1;   // regolazione data dal giocatore ("facile" / "dura")
+  return pick.map(([id, name, base]) => ({ id, name, target: Math.max(1, Math.round(base * m * adj)), done: 0, ai: 0 }));
 }
 function newDay() {
   const t = today(); if (S.day === t) return;
@@ -506,6 +510,16 @@ function completeQuest() {
   if (nr !== oldRank) overlay("NUOVO RANGO", "Il Sistema ti ha promosso.<br>Le missioni diventano più difficili." + extra, "RANGO " + nr);
   else if (lvUp) overlay("LEVEL UP", `Missione completata. +${QEXP} EXP` + extra, "LIVELLO " + S.lv);
   else overlay("MISSIONE COMPLETATA", "Statistiche aumentate." + extra, "+" + (QEXP + bonus) + " EXP");
+  askFeel();
+}
+// Missioni che si adattano: dopo ogni missione il giocatore dice com'è andata e la missione di domani si regola (±10%, tra 70% e 130%)
+function askFeel() {
+  const box = document.createElement("div"); box.className = "feel";
+  box.innerHTML = `<p>Com'è stata la missione?</p><div><button class="btn" data-f="easy">Facile</button><button class="btn" data-f="ok">Giusta</button><button class="btn" data-f="hard">Dura</button></div>`;
+  $("ovbody").appendChild(box);
+  box.onclick = e => { const f = e.target.dataset.f; if (!f) return;
+    const a = S.adj || 1; S.adj = Math.round(Math.min(1.3, Math.max(.7, f === "easy" ? a * 1.1 : f === "hard" ? a * .9 : a)) * 100) / 100; store.set(S);
+    box.innerHTML = `<p>${f === "easy" ? "Il Sistema alza il livello: domani missione più intensa." : f === "hard" ? "Il Sistema regola il carico: domani missione più leggera." : "Ricevuto. Il Sistema mantiene il ritmo."}</p>`; };
 }
 function checkDone(kind) {
   if (kind === "p" && S.penalty.every(x => x.done >= x.target)) { S.penalty = null; store.set(S); render(); overlay("PENALITÀ SCONTATA", "Il Sistema ha registrato il tuo sforzo.<br>Ora completa la missione di oggi.", "OK", false); return true; }
@@ -1050,6 +1064,31 @@ function tutRender() {
 function tutorialAfterTrial(aborted) { TUT.trialOk = !aborted && GD.trial && GD.trial.done >= 1; TUT.step = 1; tutRender(); if (!TUT.trialOk) { const p = document.querySelector("#gin .lead"); if (p) p.textContent = "La prova non è finita. Controlla di essere a 2 metri e con tutto il corpo nell'inquadratura, poi riprova. Oppure inizia la missione e conta da solo."; } }
 function tutEnd(startQuest) { S.tut = true; store.set(S); GD.on = false; GD.mode = "quest"; cancelAnimationFrame(demoRaf); $("guide").classList.remove("on"); document.body.style.overflow = ""; render(); if (startQuest) guideOpen("q"); }
 const esc = t => String(t).replace(/[&<>"]/g, ch => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[ch]));
+
+// ================= IL SISTEMA IN CHAT =================
+// Spento finché SISTEMA_CHAT_URL è vuoto. Si accende inserendo l'indirizzo del server (cartella server/sistema-chat).
+const SISTEMA_CHAT_URL = "";
+if (SISTEMA_CHAT_URL) {
+  $("chatOpen").classList.remove("hide");
+  const box = document.createElement("div"); box.id = "chat"; box.className = "overlay";
+  box.innerHTML = `<div class="win" style="max-width:420px;width:100%;text-align:left;display:flex;flex-direction:column;height:min(80vh,620px)">
+    <div class="tag"><i>!</i>Canale del Sistema</div>
+    <div id="chatLog" style="flex:1;overflow-y:auto;margin:12px 0;display:flex;flex-direction:column;gap:10px;font-size:15px;line-height:1.45"></div>
+    <form id="chatForm" style="display:flex;gap:8px"><input id="chatIn" maxlength="600" placeholder="Scrivi al Sistema…" autocomplete="off" style="font-size:16px;text-align:left">
+    <button class="btn" type="submit" style="background:var(--a);color:#001a1f">Invia</button></form>
+    <button class="gsec" type="button" id="chatClose">Chiudi</button>
+    <p class="fine">Il Sistema non è un medico. Le domande vengono elaborate da un'IA.</p></div>`;
+  document.body.appendChild(box);
+  const log = $("chatLog"), hist = [];
+  const add = (who, text) => { const d = document.createElement("div"); d.style.cssText = who === "u" ? "align-self:flex-end;background:rgba(111,243,255,.14);padding:10px 12px;border-radius:14px;max-width:85%" : "align-self:flex-start;background:rgba(255,255,255,.06);padding:10px 12px;border-radius:14px;max-width:85%;color:var(--t)"; d.textContent = text; log.appendChild(d); log.scrollTop = 1e9; return d; };
+  $("chatOpen").onclick = () => { box.classList.add("on"); if (!log.children.length) add("s", "Canale aperto. Il Sistema ti ascolta, " + (S ? S.name : "giocatore") + "."); setTimeout(() => $("chatIn").focus(), 200); };
+  $("chatClose").onclick = () => box.classList.remove("on");
+  $("chatForm").onsubmit = async e => { e.preventDefault(); const q = $("chatIn").value.trim(); if (!q) return; $("chatIn").value = ""; add("u", q); hist.push({ role: "user", content: q });
+    const wait = add("s", "…"); try {
+      const r = await fetch(SISTEMA_CHAT_URL, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ messages: hist.slice(-12), player: S ? { name: S.name, rank: rankOf(S.lv)[0], level: S.lv, streak: S.streak, goal: S.goal } : {} }) });
+      const j = await r.json(); wait.textContent = j.reply || "Il Sistema non risponde."; if (r.ok && j.reply) hist.push({ role: "assistant", content: j.reply });
+    } catch (_) { wait.textContent = "Connessione al Sistema persa. Riprova."; } };
+}
 // Anteprima di controllo delle animazioni per il coach/tester: apri index.html#rigsheet
 if (location.hash === "#rigsheet") {
   const ids = Object.keys(EXA), cell = 200, cols = 5, S2 = document.createElement("canvas"); S2.width = cell * cols; S2.height = cell * ids.length;

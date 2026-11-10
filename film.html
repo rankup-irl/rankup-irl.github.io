@@ -7,6 +7,8 @@
 <meta name="description" content="L'allenamento a casa che ti fa salire di rango. La fotocamera conta ogni ripetizione. Scopri il tuo rango in 30 secondi.">
 <meta name="theme-color" content="#000000">
 <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;800&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
 <style>
 /* "Il Sistema ti ha scelto": il protagonista è l'app. Nero profondo, luce azzurra del Sistema, oro per il rango.
@@ -109,6 +111,9 @@ a{color:inherit}
 .rk .L{font-family:var(--f-disp);font-weight:800;font-size:13em;line-height:1;background:linear-gradient(180deg,#fff 15%,var(--gold));-webkit-background-clip:text;background-clip:text;color:transparent}
 .rk .strip{display:flex;gap:.5em;margin-top:.4em}.rk .strip span{width:2.2em;height:2.2em;border-radius:.6em;display:grid;place-items:center;font-weight:800;background:rgba(255,255,255,.05);opacity:.5}
 
+.fcta{position:fixed;right:max(16px,env(safe-area-inset-right));bottom:calc(env(safe-area-inset-bottom) + 14px);z-index:31;font:700 15px var(--f-ui);color:#001a1f;text-decoration:none;
+  background:linear-gradient(90deg,var(--sys),#a9f8ff);border-radius:999px;padding:14px 20px;min-height:48px;box-shadow:0 10px 30px -8px rgba(111,243,255,.5);opacity:0;transform:translateY(20px);pointer-events:none;transition:opacity .3s,transform .3s}
+.fcta.on{opacity:1;transform:none;pointer-events:auto}
 .readout{position:fixed;left:max(18px,env(safe-area-inset-left));bottom:calc(env(safe-area-inset-bottom) + 16px);z-index:30;display:flex;align-items:center;gap:10px;color:var(--mute);pointer-events:none;transition:opacity .4s}
 .readout i{display:block;width:64px;height:2px;background:rgba(255,255,255,.12);position:relative;overflow:hidden}.readout i b{position:absolute;inset:0;width:0;background:var(--sys)}
 .fade{position:absolute;left:0;right:0;bottom:0;height:45%;background:linear-gradient(180deg,transparent,#000);opacity:0;pointer-events:none;z-index:4}
@@ -143,7 +148,8 @@ section.c{padding:96px 0 0}
 </style>
 </head>
 <body>
-<header class="hdr" id="hdr"><a class="logo" href="./film.html">RANK<b>UP</b></a><a class="go" href="./?start">Inizia</a></header>
+<header class="hdr" id="hdr"><a class="logo" href="./film.html">RANK<b>UP</b></a><a class="go" href="rango.html">Il tuo rango</a></header>
+<a class="fcta" id="fcta" href="rango.html">Scopri il tuo rango · 30 s</a>
 <div class="readout mono" id="readout"><span id="chap">01 · Notifica</span><i><b id="bar"></b></i></div>
 
 <section id="film" aria-label="Presentazione dell'app RANKUP">
@@ -243,6 +249,7 @@ section.c{padding:96px 0 0}
   const REDUCE = matchMedia("(prefers-reduced-motion: reduce)").matches, JUMP = new URLSearchParams(location.search).get("jump");
   if (JUMP !== null) history.scrollRestoration = "manual";
   const HAS = typeof gsap !== "undefined" && typeof ScrollTrigger !== "undefined";
+  const FILM = 4.5;   // lunghezza del film in schermate: abbastanza per le 5 scene, non troppo per chi arriva da TikTok
 
   // ora e data reali di chi guarda
   const now = new Date(), hm = now.getHours() + ":" + String(now.getMinutes()).padStart(2, "0");
@@ -289,17 +296,19 @@ section.c{padding:96px 0 0}
     // nel finale il telefono scende un poco per lasciare spazio al testo
     $("pw").style.top = (60 - 15 * close) + "%";
     $("fade").style.opacity = sm(.95, 1, p);
-    const ch = [[0, "01 · Notifica"], [.17, "02 · Missione"], [.38, "03 · Fotocamera"], [.61, "04 · Level up"], [.79, "05 · Rango"]];
+    const ch = [[0, "01/05"], [.17, "02/05"], [.38, "03/05"], [.61, "04/05"], [.79, "05/05"]];
     let n = ch[0][1]; for (const [s, l] of ch) if (p >= s) n = l; $("chap").textContent = n; $("bar").style.width = (p * 100) + "%";
-    $("readout").style.opacity = p > .995 ? 0 : 1;
-    $("hdr").classList.toggle("solid", scrollY > innerHeight * 6.3);
+    $("readout").style.opacity = p > .8 ? 0 : 1;
+    const past = scrollY > innerHeight * (FILM + .9);
+    $("hdr").classList.toggle("solid", past);
+    $("fcta").classList.toggle("on", (p > .06 && p < .82) || past);
   }
 
   let target = 0, cur = 0;
   if (HAS) {
     gsap.registerPlugin(ScrollTrigger);
     if (!REDUCE && JUMP === null && typeof Lenis !== "undefined") { const lenis = new Lenis({ lerp: .09, smoothWheel: true }); lenis.on("scroll", ScrollTrigger.update); gsap.ticker.add(t => lenis.raf(t * 1000)); gsap.ticker.lagSmoothing(0); }
-    ScrollTrigger.create({ trigger: "#film", start: "top top", end: () => "+=" + innerHeight * 6, pin: true, scrub: true, onUpdate: s => { target = s.progress; } });
+    ScrollTrigger.create({ trigger: "#film", start: "top top", end: () => "+=" + innerHeight * FILM, pin: true, scrub: true, onUpdate: s => { target = s.progress; } });
     gsap.utils.toArray(".reveal").forEach(el => gsap.to(el, { opacity: 1, y: 0, duration: .8, ease: "power3.out", scrollTrigger: { trigger: el, start: "top 88%", once: true } }));
     gsap.to("#marq", { xPercent: -50, repeat: -1, duration: 38, ease: "none" });
     gsap.ticker.add(() => { cur += (target - cur) * (REDUCE ? 1 : .14); render(cur, performance.now()); });
