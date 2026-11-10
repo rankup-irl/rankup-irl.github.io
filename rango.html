@@ -56,6 +56,9 @@
   .stats b { color: var(--fg); font-size: 24px; font-weight: 700; letter-spacing: -.03em; display: block; text-align: center; font-variant-numeric: tabular-nums; }
   input[type=email] { width: 100%; padding: 15px 16px; font: 500 16px Inter, sans-serif; color: var(--fg); background: rgba(255,255,255,.07); border: 1px solid transparent; border-radius: 14px; outline: none; }
   input[type=email]:focus { border-color: rgba(111,243,255,.6); }
+  .consent { display: flex; gap: 10px; align-items: flex-start; font-size: 13px; line-height: 1.45; color: var(--muted); cursor: pointer; }
+  .consent input { width: 20px; height: 20px; margin: 1px 0 0; flex: none; accent-color: var(--line); }
+  .consent a { color: var(--line); }
   .msg { font-weight: 600; font-size: 14px; } .msg.ok { color: var(--ok); } .msg.err { color: var(--red); }
   [hidden] { display: none !important; }
   .foot { text-align: center; font-size: 12px; color: var(--m2); margin-top: auto; padding-top: 12px; }
@@ -81,9 +84,10 @@
         <li>Appoggia il telefono a terra, in verticale</li>
         <li>Allontanati di 2 metri: si deve vedere tutto il corpo</li>
         <li>Scendi finché le cosce sono quasi parallele al pavimento</li>
-        <li>Se senti dolore, fermati</li>
+        <li>Se senti dolore, vertigini o fiato corto, fermati subito</li>
       </ul>
-      <p class="small" style="margin-top:12px">Il video resta sul tuo telefono: nessuna immagine viene salvata o inviata.</p>
+      <p class="small" style="margin-top:12px">Hai problemi di salute o non ti alleni da tempo? Parla prima con un medico. <a href="privacy.html#salute" style="color:var(--line)">Avvertenze sulla salute</a></p>
+      <p class="small" style="margin-top:8px">Il video resta sul tuo telefono: nessuna immagine viene salvata o inviata.</p>
     </div>
     <button class="btn" id="btnStart" type="button">Accetto la missione</button>
     <button class="btn ghost" id="btnManual" type="button">Niente fotocamera: conto da solo</button>
@@ -124,6 +128,7 @@
       <div class="row" style="margin-top:14px">
         <label class="small" for="email">La tua email</label>
         <input id="email" type="email" inputmode="email" autocomplete="email" placeholder="nome@email.com">
+        <label class="consent" for="consent"><input id="consent" type="checkbox"> <span>Ho almeno 14 anni e voglio ricevere email su RANKUP. Ho letto l'<a href="privacy.html#privacy">informativa privacy</a>.</span></label>
         <button class="btn gold" id="btnJoin" type="button">Entro nella lista</button>
         <p class="msg" id="joinMsg" role="status"></p>
       </div>
@@ -134,7 +139,7 @@
     <button class="btn ghost" id="btnAgain" type="button">Riprova</button>
   </section>
 
-  <div class="foot">RANKUP · <a href="https://www.tiktok.com/@rankup.irl" target="_blank" rel="noopener">@rankup.irl</a></div>
+  <div class="foot">RANKUP · <a href="https://www.tiktok.com/@rankup.irl" target="_blank" rel="noopener">@rankup.irl</a> · <a href="privacy.html">Privacy e salute</a></div>
 </main>
 
 <script type="module">
@@ -254,6 +259,7 @@
   $('btnJoin').addEventListener('click', async () => {
     const email = $('email').value.trim(); const msg = $('joinMsg');
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { msg.className = 'msg err'; msg.textContent = 'Controlla l\'email: sembra incompleta.'; return; }
+    if (!$('consent').checked) { msg.className = 'msg err'; msg.textContent = 'Spunta la casella per confermare età e consenso.'; return; }
     $('btnJoin').disabled = true; msg.className = 'msg'; msg.textContent = 'Invio al Sistema…';
     try {
       const r = rankFor(reps);

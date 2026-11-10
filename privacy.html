@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Privacy e salute · RANKUP</title>
+<meta name="theme-color" content="#000000">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root { --bg:#000; --card:rgba(255,255,255,.06); --hair:rgba(255,255,255,.08); --a:#6ff3ff; --fg:#f5f5f7; --m:#a1a1a6; --red:#ff6b6b; color-scheme: dark; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--fg); font: 500 16px/1.6 Inter, -apple-system, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  .app { max-width: 680px; margin: 0 auto; padding: max(24px, env(safe-area-inset-top)) max(20px, env(safe-area-inset-right)) 64px max(20px, env(safe-area-inset-left)); }
+  .top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 28px; }
+  .logo { font-weight: 800; letter-spacing: .2em; font-size: 15px; color: #fff; text-decoration: none; } .logo span { color: var(--a); }
+  nav a { color: var(--a); text-decoration: none; font-weight: 600; font-size: 14px; margin-left: 16px; }
+  h1 { font-size: clamp(34px, 9vw, 48px); line-height: 1.05; letter-spacing: -.045em; margin: 0 0 8px; }
+  h2 { font-size: 24px; letter-spacing: -.03em; margin: 40px 0 10px; scroll-margin-top: 20px; }
+  h3 { font-size: 16px; margin: 22px 0 6px; }
+  p, li { color: #d2d2d7; } ul { padding-left: 20px; } li { margin: 4px 0; }
+  .muted { color: var(--m); font-size: 14px; }
+  .card { background: var(--card); border: 1px solid var(--hair); border-radius: 20px; padding: 18px 20px; margin: 16px 0; }
+  .card.warn { background: rgba(255,107,107,.08); border-color: rgba(255,107,107,.3); }
+  .card.warn strong { color: var(--red); }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  td, th { text-align: left; padding: 10px 8px; border-bottom: 1px solid var(--hair); vertical-align: top; color: #d2d2d7; }
+  th { color: var(--m); font-weight: 600; }
+  .scroll { overflow-x: auto; }
+  a { color: var(--a); }
+  mark { background: rgba(255,226,122,.2); color: #ffe27a; padding: 0 4px; border-radius: 4px; }
+</style>
+</head>
+<body>
+<main class="app">
+  <div class="top"><a class="logo" href="./">RANK<span>UP</span></a><nav><a href="#privacy">Privacy</a><a href="#salute">Salute</a></nav></div>
+  <h1>Privacy e salute</h1>
+  <p class="muted">Ultimo aggiornamento: 10 novembre 2026</p>
+
+  <div class="card warn" id="salute-breve">
+    <strong>Prima di allenarti:</strong> RANKUP propone esercizi a corpo libero di carattere generale. Non è un consiglio medico.
+    Se hai problemi di salute, sei in gravidanza, hai infortuni o non ti alleni da tempo, parla prima con un medico.
+    Se senti dolore, vertigini o fiato corto, fermati subito.
+  </div>
+
+  <h2 id="privacy">Informativa privacy</h2>
+  <p>Questa informativa spiega quali dati tratta RANKUP, perché e quali sono i tuoi diritti, come previsto dal Regolamento europeo 2016/679 (GDPR).</p>
+
+  <h3>Chi è il titolare</h3>
+  <p>Il titolare del trattamento è <mark>DAVIDE CRACCHIOLO</mark>, che gestisce il progetto RANKUP.
+  Per qualsiasi richiesta sulla privacy scrivi a <a href="mailto:rankupdaily.irl@gmail.com">rankupdaily.irl@gmail.com</a>.</p>
+
+  <h3>Cosa resta solo sul tuo telefono</h3>
+  <ul>
+    <li><b>Fotocamera:</b> le immagini vengono analizzate direttamente nel tuo browser per contare le ripetizioni. Non vengono registrate, salvate o inviate a nessuno.</li>
+    <li><b>Nome del giocatore, missioni, livelli e statistiche:</b> sono salvati solo nella memoria del tuo browser. Non li riceviamo. Se cancelli i dati del sito, si cancellano anche loro.</li>
+  </ul>
+  <p>Non usiamo cookie di profilazione, pubblicità o strumenti di tracciamento.</p>
+
+  <h3>Cosa raccogliamo: la lista d'attesa</h3>
+  <p>Se ti iscrivi alla lista d'attesa dalla pagina del test del rango, raccogliamo:</p>
+  <ul>
+    <li>il tuo <b>indirizzo email</b>;</li>
+    <li>il <b>rango</b> e il <b>numero di squat</b> del test, e l'eventuale punteggio della sfida da cui sei arrivato.</li>
+  </ul>
+  <p><b>Perché:</b> per avvisarti quando l'app è disponibile e mandarti aggiornamenti su RANKUP. Niente altro: non vendiamo né cediamo la tua email.</p>
+  <p><b>Base giuridica:</b> il tuo consenso, che dai spuntando la casella prima di iscriverti. Puoi ritirarlo quando vuoi.</p>
+  <p><b>Per quanto tempo:</b> fino a quando chiedi di essere cancellato, e comunque non oltre 12 mesi dal lancio dell'app.</p>
+
+  <h3>Servizi esterni usati dal sito</h3>
+  <div class="scroll"><table>
+    <tr><th>Servizio</th><th>A cosa serve</th><th>Quali dati vede</th></tr>
+    <tr><td>GitHub Pages (GitHub Inc.)</td><td>Ospita il sito</td><td>Indirizzo IP e dati tecnici della visita</td></tr>
+    <tr><td>FormSubmit (formsubmit.co)</td><td>Inoltra l'iscrizione alla lista d'attesa</td><td>Email, rango, squat</td></tr>
+    <tr><td>Gmail (Google)</td><td>Casella dove arrivano le iscrizioni</td><td>Email, rango, squat</td></tr>
+    <tr><td>Google Fonts, jsDelivr, Google Cloud Storage</td><td>Caratteri del sito e modello per il conteggio con la fotocamera</td><td>Indirizzo IP e dati tecnici della richiesta</td></tr>
+  </table></div>
+  <p>Alcuni di questi fornitori hanno sede negli Stati Uniti. Il trasferimento avviene sulla base delle garanzie previste dal GDPR (per esempio l'EU-US Data Privacy Framework o le clausole contrattuali standard).</p>
+
+  <h3>Età minima</h3>
+  <p>RANKUP è pensato per persone maggiorenni. Se hai meno di 14 anni non puoi iscriverti alla lista d'attesa. Se hai tra 14 e 18 anni, chiedi prima a un genitore.</p>
+
+  <h3>I tuoi diritti</h3>
+  <p>Puoi chiedere in qualsiasi momento di vedere, correggere o cancellare i tuoi dati, limitarne l'uso, riceverne una copia o ritirare il consenso. Scrivi a <a href="mailto:rankupdaily.irl@gmail.com">rankupdaily.irl@gmail.com</a>: rispondiamo entro 30 giorni.
+  Se pensi che i tuoi dati siano trattati in modo scorretto, puoi presentare un reclamo al <a href="https://www.garanteprivacy.it" target="_blank" rel="noopener">Garante per la protezione dei dati personali</a>.</p>
+
+  <h2 id="salute">Avvertenze sulla salute e sulla sicurezza</h2>
+  <ul>
+    <li>RANKUP è un gioco che propone esercizi a corpo libero generici. <b>Non sostituisce il parere di un medico</b> o di un professionista dell'allenamento.</li>
+    <li>Prima di iniziare, consulta un medico se hai malattie cardiache o respiratorie, pressione alta, problemi alle articolazioni o alla schiena, infortuni recenti, se sei in gravidanza o se non ti alleni da molto tempo.</li>
+    <li><b>Fermati subito</b> se senti dolore, vertigini, nausea, fiato corto anomalo o dolore al petto.</li>
+    <li>Fai qualche minuto di riscaldamento. Rispetta i tuoi limiti: la tecnica conta più del numero di ripetizioni, e puoi sempre fare meno ripetizioni o una versione più facile.</li>
+    <li>Allenati in uno spazio libero da ostacoli, su un pavimento non scivoloso. Appoggia il telefono in modo stabile.</li>
+    <li>Le "penalità" sono parte del gioco: non sono obbligatorie. Se sei stanco, malato o infortunato, riposa.</li>
+  </ul>
+  <p class="muted">Usando RANKUP accetti di allenarti sotto la tua responsabilità e secondo le tue condizioni fisiche.</p>
+</main>
+</body>
+</html>
