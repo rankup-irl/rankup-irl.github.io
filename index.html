@@ -180,20 +180,94 @@ input::placeholder{color:var(--m2)}
 .gphone .man{width:120px;height:120px;border:0;background:none}
 .qgo{margin-top:12px!important}
 .row .n.tapdemo{cursor:pointer}
+/* ===== HOME di presentazione ===== */
+#home{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:calc(env(safe-area-inset-top) + 14px) max(20px,env(safe-area-inset-right)) calc(env(safe-area-inset-bottom) + 40px) max(20px,env(safe-area-inset-left))}
+.hnav{display:flex;justify-content:space-between;align-items:center;height:44px}
+.hero{display:grid;gap:28px;align-items:center;padding:24px 0 8px;animation:rise .7s var(--ease) both}
+@media(min-width:860px){.hero{grid-template-columns:1.1fr .9fr;gap:56px;padding:64px 0 24px}}
+.hero h1{font-size:clamp(46px,9vw,86px);line-height:.98;letter-spacing:-.055em;margin:14px 0 18px;font-weight:800;background:linear-gradient(180deg,#fff 35%,#9aa6b2);-webkit-background-clip:text;background-clip:text;color:transparent;text-wrap:balance}
+.hero .sub{font-size:clamp(17px,2.2vw,21px);color:var(--m);line-height:1.45;max-width:32ch}
+.hcta{display:flex;flex-wrap:wrap;gap:12px;margin-top:26px}
+.hcta .btn{padding:16px 24px;font-size:16px;text-decoration:none;display:inline-block}
+.btn.primary{color:#001a1f;background:linear-gradient(90deg,var(--a),#a9f8ff);font-weight:700}
+.hero .fine{text-align:left;margin-top:16px}
+.stage{position:relative;border-radius:32px;background:var(--card);border:1px solid var(--hair);aspect-ratio:1;overflow:hidden;max-width:520px;width:100%;justify-self:center}
+.stage canvas{width:100%;height:100%;display:block}
+.hud{position:absolute;top:16px;left:16px;right:16px;display:flex;justify-content:space-between;pointer-events:none}
+.hud div{background:rgba(28,28,30,.6);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);border:1px solid var(--hair);border-radius:16px;padding:8px 14px;min-width:84px}
+.hud small{display:block;font-size:10px;letter-spacing:.14em;color:var(--m);font-weight:600}
+.hud b{font-size:30px;font-weight:700;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.stage .cap{position:absolute;left:0;right:0;bottom:14px;text-align:center;font-size:11px;letter-spacing:.14em;color:var(--m2);font-weight:600}
+.steps{display:grid;gap:12px;margin-top:40px}
+@media(min-width:860px){.steps{grid-template-columns:repeat(3,1fr);gap:16px;margin-top:64px}}
+.step{background:var(--card);border:1px solid var(--hair);border-radius:24px;padding:22px}
+.step .n{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-size:14px;font-weight:700;color:#001a1f;background:var(--a)}
+.step h3{font-size:22px;letter-spacing:-.03em;margin:14px 0 6px}.step p{color:var(--m);font-size:15px;line-height:1.5}
+.hsec{margin-top:64px;text-align:center}
+.hsec h2{font-size:clamp(32px,5.5vw,52px);letter-spacing:-.045em;line-height:1.04;margin-bottom:12px;text-wrap:balance}
+.hsec p{color:var(--m);font-size:17px;max-width:44ch;margin:0 auto}
+.hranks{display:flex;justify-content:center;gap:clamp(8px,2vw,18px);margin:28px 0 6px}
+.hranks span{width:clamp(44px,12vw,76px);aspect-ratio:1;border-radius:18px;display:grid;place-items:center;font-weight:800;font-size:clamp(22px,5vw,34px);background:rgba(255,255,255,.04);border:1px solid var(--hair)}
+.hranks span:last-child{border-color:rgba(255,215,90,.5);box-shadow:0 0 34px rgba(255,215,90,.3)}
+.why{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:22px}
+.why span{padding:10px 16px;border-radius:999px;background:var(--card);border:1px solid var(--hair);font-size:14px;font-weight:600}
+.final{margin-top:64px;padding:40px 22px;border-radius:32px;background:radial-gradient(ellipse at 50% 0%,rgba(111,243,255,.16),transparent 70%),var(--card);border:1px solid var(--hair);text-align:center}
+.final h2{font-size:clamp(40px,7vw,64px);letter-spacing:-.05em;margin:10px 0 6px}
+.final .tag{justify-content:center}
+.hfoot{margin-top:28px;text-align:center;font-size:12px;color:var(--m2)}.hfoot a{color:var(--m);text-decoration:none}
 @media (prefers-reduced-motion:reduce){*,*:before{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
+<!-- HOME di presentazione (solo per chi non ha ancora un giocatore) -->
+<section id="home" class="hide">
+  <nav class="hnav"><div class="logo">RANK<span>UP</span></div><button class="btn" id="hTop">Inizia</button></nav>
+  <div class="hero">
+    <div>
+      <div class="tag">Notifica del Sistema</div>
+      <h1>Il Sistema ti ha scelto.</h1>
+      <p class="sub">Allenati a casa come in un anime. Ogni giorno una missione, la fotocamera conta ogni ripetizione e tu sali di rango, da E a S.</p>
+      <div class="hcta"><button class="btn primary" id="hStart">Inizia ora, è gratis</button><a class="btn" href="rango.html">Scopri il tuo rango in 30 s</a></div>
+      <p class="fine">Niente attrezzi · niente abbonamento · pochi minuti al giorno</p>
+    </div>
+    <div class="stage">
+      <canvas id="hzero" aria-label="ZERO esegue uno squat corretto mentre il Sistema conta le ripetizioni"></canvas>
+      <div class="hud"><div><small>SQUAT</small><b id="hreps">0</b></div><div><small>VOTO</small><b id="hgrade" style="color:var(--g)">–</b></div></div>
+      <div class="cap">ZERO · COME LO VEDE IL SISTEMA</div>
+    </div>
+  </div>
+  <div class="steps">
+    <div class="step"><div class="n">1</div><h3>Ricevi la missione</h3><p>Ogni giorno 4 esercizi a corpo libero, calibrati sul tuo rango. In camera, in salotto o al parco.</p></div>
+    <div class="step"><div class="n">2</div><h3>Il Sistema ti guarda</h3><p>La fotocamera conta squat e jumping jack e dà un voto alla tecnica. Le immagini restano sul tuo telefono.</p></div>
+    <div class="step"><div class="n">3</div><h3>Sali di rango</h3><p>Guadagni EXP, livelli e statistiche. Se salti un giorno, il Sistema ti assegna la penalità.</p></div>
+  </div>
+  <div class="hsec">
+    <h2>Dove arriverai?</h2><p>Tutti partono dal rango E. Pochi arrivano alla S.</p>
+    <div class="hranks"><span style="color:#9aa3b2">E</span><span style="color:#6edc8c">D</span><span style="color:#5aaaff">C</span><span style="color:#b478ff">B</span><span style="color:#ff9646">A</span><span style="color:#ffd75a">S</span></div>
+  </div>
+  <div class="hsec">
+    <h2>La palestra è facoltativa.<br>Il Sistema no.</h2>
+    <div class="why"><span>🏠 Ovunque tu sia</span><span>⏱ Pochi minuti</span><span>💸 Gratis</span><span>👁 Non puoi barare</span></div>
+  </div>
+  <div class="final">
+    <div class="tag">Notifica del Sistema</div>
+    <h2>Accetti?</h2>
+    <p class="lead" style="text-align:center">La tua prima missione è pronta.</p>
+    <button class="btn big accent" id="hStart2" style="max-width:360px;margin:18px auto 0">Accetto il Sistema</button>
+  </div>
+  <div class="hfoot"><a href="https://www.tiktok.com/@rankup.irl" target="_blank" rel="noopener">@rankup.irl</a> · <a href="privacy.html">Privacy e salute</a></div>
+</section>
+
 <div class="app">
   <div class="brand"><div class="logo">RANK<span>UP</span></div><div class="chip" id="streak">🔥 0</div></div>
 
   <!-- ONBOARDING -->
   <section id="onb">
     <div class="win" id="onb1">
-      <div class="tag"><i>!</i>NOTIFICA DEL SISTEMA</div>
-      <div class="title" style="font-size:44px;margin-top:14px">Sei stato scelto.</div><hr>
-      <p class="lead">Una missione al giorno, a casa, senza attrezzi. Completala e sali di rango. Saltala e arriva la penalità.</p>
-      <label for="iname">Come ti chiami?</label>
+      <div class="tag"><i>!</i>Passo 1 di 3</div>
+      <div class="title" style="font-size:40px;margin-top:14px">Come ti chiami?</div><hr>
+      <p class="lead">È il nome con cui il Sistema ti chiamerà.</p>
+      <label for="iname">Nome del giocatore</label>
       <input id="iname" maxlength="16" placeholder="Il tuo nome" autocomplete="off">
       <button class="btn big" id="n1">Continua</button>
       <p class="fine">Pochi minuti al giorno · gratis · <a href="privacy.html" style="color:var(--m)">Privacy e salute</a></p>
@@ -317,13 +391,14 @@ const $ = id => document.getElementById(id);
 const RANKS = [["E",1,"#9aa3b2"],["D",5,"#6edc8c"],["C",10,"#5aaaff"],["B",20,"#b478ff"],["A",35,"#ff9646"],["S",50,"#ffd75a"]];
 const MULT = { E: 1, D: 1.5, C: 2, B: 2.7, A: 3.5, S: 5 };
 const GOALS = {
-  brucia:     { name: "BRUCIA", ic: "🔥", desc: "Perdere peso e definirti", ex: [["squat", "Squat", 15], ["jj", "Jumping jack", 30], ["mc", "Mountain climber", 20], ["run", "Corsa sul posto (sec)", 60]] },
-  forza:      { name: "FORZA", ic: "💪", desc: "Mettere massa e diventare più forte", ex: [["push", "Flessioni", 8], ["squat", "Squat", 15], ["lunge", "Affondi", 10], ["plank", "Plank (sec)", 30]] },
-  resistenza: { name: "RESISTENZA", ic: "⚡", desc: "Più fiato, più energia, più costanza", ex: [["squat", "Squat", 15], ["burpee", "Burpees", 6], ["jj", "Jumping jack", 25], ["plank", "Plank (sec)", 30]] },
+  // ex[0] è l'esercizio fisso del percorso; ogni giorno se ne aggiungono 3 a rotazione dagli altri
+  brucia:     { name: "BRUCIA", ic: "🔥", desc: "Perdere peso e definirti", ex: [["squat", "Squat", 15], ["jj", "Jumping jack", 30], ["mc", "Mountain climber", 20], ["run", "Corsa sul posto (sec)", 45], ["crunch", "Crunch", 12], ["bridge", "Ponte glutei", 12]] },
+  forza:      { name: "FORZA", ic: "💪", desc: "Mettere massa e diventare più forte", ex: [["push", "Flessioni", 8], ["squat", "Squat", 15], ["lunge", "Affondi", 10], ["plank", "Plank (sec)", 30], ["bridge", "Ponte glutei", 12], ["wallsit", "Sedia al muro (sec)", 30], ["superman", "Superman", 10]] },
+  resistenza: { name: "RESISTENZA", ic: "⚡", desc: "Più fiato, più energia, più costanza", ex: [["squat", "Squat", 15], ["burpee", "Burpees", 6], ["jj", "Jumping jack", 25], ["plank", "Plank (sec)", 30], ["mc", "Mountain climber", 20], ["wallsit", "Sedia al muro (sec)", 30]] },
 };
 const AI_EXERCISES = { squat: true, jj: true };   // exercises the camera can verify
-const TIME_EXERCISES = { run: true, plank: true };  // exercises measured in seconds
-const PENALTY = [["burpee", "Burpees", 30]];
+const TIME_EXERCISES = { run: true, plank: true, wallsit: true };  // exercises measured in seconds
+const PENALTY = [["burpee", "Burpees", 10]];   // 10 al rango E, cresce con il rango fino a un massimo di 30
 const QEXP = 250, AI_BONUS = 50;
 
 let mem = {};
@@ -339,12 +414,14 @@ const rankOf = l => { let r = RANKS[0]; for (const x of RANKS) if (l >= x[1]) r 
 const startLevel = p => p >= 100 ? 50 : p > 60 ? 35 : p > 40 ? 20 : p > 25 ? 10 : p > 10 ? 5 : 1;
 
 function buildQuest() {
-  const m = MULT[rankOf(S.lv)[0]];
-  return GOALS[S.goal].ex.map(([id, name, base]) => ({ id, name, target: Math.round(base * m), done: 0, ai: 0 }));
+  const m = MULT[rankOf(S.lv)[0]], pool = GOALS[S.goal].ex, rest = pool.slice(1);
+  const n = Math.floor(Date.parse(today()) / 864e5), pick = [pool[0]];
+  for (let k = 0; k < 3; k++) pick.push(rest[(n + k) % rest.length]);   // rotazione giornaliera
+  return pick.map(([id, name, base]) => ({ id, name, target: Math.round(base * m), done: 0, ai: 0 }));
 }
 function newDay() {
   const t = today(); if (S.day === t) return;
-  if (S.day && (!S.qdone || dayDiff(S.day, t) > 1)) { S.penalty = PENALTY.map(([id, name, v]) => ({ id, name, target: v, done: 0, ai: 0 })); S.streak = 0; }
+  if (S.day && (!S.qdone || dayDiff(S.day, t) > 1)) { const pm = MULT[rankOf(S.lv)[0]]; S.penalty = PENALTY.map(([id, name, v]) => ({ id, name, target: Math.min(30, Math.round(v * pm)), done: 0, ai: 0 })); S.streak = 0; }
   S.day = t; S.qdone = false; S.lastGain = null; S.quest = buildQuest(); store.set(S);
 }
 
@@ -364,7 +441,24 @@ function rowsHtml(rows, kind) {
       (ctr ? `<div class="ctr">${ctr}</div>` : "") + `</div>`;
   }).join("");
 }
+// ---------- HOME ----------
+let homeOpen = true, homeIv = 0;
+function showHome(on) {
+  const was = !$("home").classList.contains("hide");
+  $("home").classList.toggle("hide", !on); document.querySelector(".app").classList.toggle("hide", on);
+  if (on && !was) {
+    setTimeout(() => playDemo($("hzero"), "squat"), 0); const t0 = performance.now(); clearInterval(homeIv);   // dopo l'avvio dello script (demoRaf è dichiarato più sotto)
+    homeIv = setInterval(() => { const e = performance.now() - t0, r = Math.floor(e / 2600) + (e % 2600 >= 2150 ? 1 : 0);
+      $("hreps").textContent = r; $("hgrade").textContent = r ? (r % 3 === 2 ? "A" : "S") : "–"; $("hgrade").style.color = r % 3 === 2 ? "var(--ok)" : "var(--g)"; }, 100);
+  }
+  if (!on) clearInterval(homeIv);
+}
+const leaveHome = () => { homeOpen = false; cancelAnimationFrame(demoRaf); render(); scrollTo(0, 0); setTimeout(() => $("iname").focus(), 350); };
+["hTop", "hStart", "hStart2"].forEach(id => $(id).onclick = leaveHome);
+
 function render() {
+  if (!S && homeOpen) { showHome(true); return; }
+  showHome(false);
   if (!S) { $("onb").classList.remove("hide"); $("main").classList.add("hide"); $("streak").textContent = "🔥 0"; return; }
   $("onb").classList.add("hide"); $("main").classList.remove("hide");
   const [rk, , col] = rankOf(S.lv);
@@ -676,14 +770,18 @@ $("cvoice").onclick = () => { voiceOn = !voiceOn; $("cvoice").textContent = voic
 
 // ================= GUIDA: dimostrazioni animate =================
 const EXINFO = {
-  squat:  { cues: ["Piedi larghi come le spalle", "Scendi finché le <b>cosce sono parallele</b> al pavimento", "Schiena dritta, talloni sempre a terra"], view: "fronte" },
+  squat:  { cues: ["Piedi larghi come le spalle, punte leggermente in fuori", "Porta <b>l'anca indietro</b> come per sederti e scendi finché le <b>cosce sono parallele</b> al pavimento", "<b>Talloni a terra</b>, schiena dritta, braccia avanti per l'equilibrio"], view: "lato" },
   jj:     { cues: ["Salta <b>aprendo gambe e braccia</b>", "Mani che si toccano <b>sopra la testa</b>", "Salta di nuovo e richiudi: questo è 1"], view: "fronte" },
-  mc:     { cues: ["Posizione da flessione, <b>braccia tese</b>", "Porta un <b>ginocchio al petto</b>, poi l'altro, veloce", "Ogni ginocchio vale 1"], view: "lato" },
-  run:    { cues: ["Corri sul posto <b>alzando le ginocchia</b>", "Le braccia accompagnano il movimento", "Il timer conta per te"], view: "fronte" },
-  push:   { cues: ["Corpo dritto <b>dalla testa ai talloni</b>", "Scendi con il petto quasi a terra, poi spingi su", "Troppo difficile? <b>Ginocchia a terra</b>"], view: "lato" },
-  lunge:  { cues: ["Fai un <b>passo avanti</b> e scendi", "Il ginocchio dietro arriva <b>quasi a terra</b>", "Torna su e cambia gamba: ogni gamba vale 1"], view: "lato" },
-  plank:  { cues: ["<b>Avambracci a terra</b>, gomiti sotto le spalle", "Corpo dritto: <b>non alzare il sedere</b>", "Pancia in dentro e respira. Il timer conta per te"], view: "lato" },
-  burpee: { cues: ["Scendi e <b>appoggia le mani</b> a terra", "Gambe indietro in posizione da flessione", "Torna su e fai un <b>salto</b>: questo è 1"], view: "lato" },
+  mc:     { cues: ["Posizione da flessione: <b>mani sotto le spalle</b>, braccia tese", "Porta un <b>ginocchio verso il petto</b>, poi l'altro, senza alzare il sedere", "Ogni ginocchio vale 1. Troppo veloce? Rallenta"], view: "lato" },
+  run:    { cues: ["Corri sul posto <b>portando le ginocchia all'altezza dell'anca</b>", "Atterra sull'avampiede, le braccia vanno in opposizione alle gambe", "Il timer conta per te. Senza fiato? Cammina sul posto"], view: "lato" },
+  push:   { cues: ["Mani poco più larghe delle spalle, <b>corpo dritto dalla testa ai talloni</b>", "Scendi con il petto quasi a terra, <b>gomiti a 45°</b> verso i fianchi, poi spingi su", "Troppo difficile? <b>Ginocchia a terra</b>, corpo sempre dritto"], view: "lato" },
+  lunge:  { cues: ["Gambe divaricate avanti e dietro, <b>busto dritto</b>", "Scendi finché <b>il ginocchio dietro sfiora il pavimento</b>; quello davanti resta sopra la caviglia", "Spingi sul tallone davanti per risalire. Fai metà ripetizioni per gamba"], view: "lato" },
+  plank:  { cues: ["<b>Avambracci a terra</b>, gomiti sotto le spalle", "Corpo dritto: <b>non alzare il sedere e non farlo cadere</b>", "Pancia in dentro e respira. Troppo difficile? Ginocchia a terra"], view: "lato" },
+  burpee: { cues: ["Scendi e <b>appoggia le mani</b> a terra davanti ai piedi", "Salta indietro in plank con il <b>corpo dritto</b>, poi torna con i piedi vicino alle mani", "Risali e fai un <b>salto</b> con le braccia in alto: questo è 1. Versione facile: gambe indietro una alla volta, senza salto"], view: "lato" },
+  bridge: { cues: ["Sdraiati sulla schiena, <b>ginocchia piegate</b>, piedi a terra larghi come le anche", "Spingi sui talloni e <b>alza il bacino</b> finché spalle, anche e ginocchia sono in linea", "Stringi i glutei 1 secondo in alto, poi scendi piano"], view: "lato" },
+  crunch: { cues: ["Sdraiati, ginocchia piegate, <b>zona lombare a terra</b>", "Solleva <b>solo le spalle</b> verso le ginocchia, sguardo in alto", "Non tirare il collo con le mani: braccia tese verso le ginocchia"], view: "lato" },
+  superman: { cues: ["Sdraiati a pancia in giù, <b>braccia tese in avanti</b>", "Solleva insieme braccia, petto e gambe di <b>pochi centimetri</b>", "Tieni 2 secondi, sguardo verso il pavimento, poi scendi piano"], view: "lato" },
+  wallsit: { cues: ["Schiena <b>appoggiata al muro</b>, scivola giù", "Cosce parallele al pavimento, <b>ginocchia a 90°</b> sopra le caviglie", "Respira e resisti. Troppo difficile? Scendi meno. Il timer conta per te"], view: "lato" },
 };
 // pose: [hd, nk, sl, sr, el, er, hl, hr, pl, pr, kl, kr, fl, fr] in a 100x100 box, ground at y=90
 const J = ["hd","nk","sl","sr","el","er","hl","hr","pl","pr","kl","kr","fl","fr"];
@@ -709,8 +807,130 @@ const POSES = {
            [P_([[50,6],[50,16],[50,19],[51,19],[49,8],[50,8],[48,-2],[49,-2],[50,45],[51,45],[50,63],[51,63],[50,82],[51,82]]), 380]],
 };
 let demoRaf = 0;
+// Squat visto di lato con tecnica corretta: talloni a terra, anca indietro, cosce parallele, busto inclinato, braccia avanti.
+function squatSide(d) {
+  const mix = (a, b) => a + (b - a) * d, rad = a => a * Math.PI / 180;
+  const as = rad(mix(3, 38)), at = rad(mix(2, 95)), ab = rad(mix(4, 38)), aa = rad(mix(8, 85));
+  const ank = [52, 92], knee = [ank[0] + 22 * Math.sin(as), ank[1] - 22 * Math.cos(as)];
+  const hip = [knee[0] - 22 * Math.sin(at), knee[1] - 22 * Math.cos(at)];
+  const sh = [hip[0] + 27 * Math.sin(ab), hip[1] - 27 * Math.cos(ab)];
+  const head = [sh[0] + 9 * Math.sin(ab) + 1.5, sh[1] - 9 * Math.cos(ab)];
+  const elb = [sh[0] + 14 * Math.sin(aa), sh[1] + 14 * Math.cos(aa)], hand = [elb[0] + 13 * Math.sin(aa), elb[1] + 13 * Math.cos(aa)];
+  return { ank, heel: [48.5, 92], toe: [61, 92], knee, hip, sh, head, elb, hand };
+}
+function playSquatSide(canvas) {
+  const c = canvas.getContext("2d"), dpr = Math.min(2, devicePixelRatio || 1), size = canvas.clientWidth || 280; canvas.width = canvas.height = Math.round(size * dpr);
+  const t0 = performance.now(), reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const ease = x => x < .5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2, DOWN = 1100, HOLD = 250, UP = 800, REST = 450, CYC = DOWN + HOLD + UP + REST;
+  const frame = (now) => {
+    const t = (now - t0) % CYC;
+    const d = reduce ? 1 : t < DOWN ? ease(t / DOWN) : t < DOWN + HOLD ? 1 : t < DOWN + HOLD + UP ? 1 - ease((t - DOWN - HOLD) / UP) : 0;
+    const p = squatSide(d), s = canvas.width / 100, X = q => [(q[0] - 12) * s, (q[1] + 1) * s];
+    c.clearRect(0, 0, canvas.width, canvas.height);
+    c.strokeStyle = "rgba(111,243,255,.25)"; c.lineWidth = s * .6; c.beginPath(); c.moveTo(6 * s, 93.6 * s); c.lineTo(94 * s, 93.6 * s); c.stroke();
+    const seg = (a, b, col, off = 0) => { const [x1, y1] = X(a), [x2, y2] = X(b); c.strokeStyle = col; c.lineWidth = s * 2.6; c.beginPath(); c.moveTo(x1 + off, y1); c.lineTo(x2 + off, y2); c.stroke(); };
+    c.lineCap = "round"; c.shadowColor = "#6ff3ff"; c.shadowBlur = 14 * dpr;
+    const far = "rgba(111,243,255,.4)", near = "#6ff3ff", o = -s * 2.2;
+    [[p.heel, p.toe], [p.ank, p.knee], [p.knee, p.hip], [p.sh, p.elb], [p.elb, p.hand]].forEach(([a, b]) => seg(a, b, far, o));
+    [[p.heel, p.toe], [p.ank, p.knee], [p.knee, p.hip], [p.hip, p.sh], [p.sh, p.elb], [p.elb, p.hand]].forEach(([a, b]) => seg(a, b, near));
+    const [hx, hy] = X(p.head); c.fillStyle = near; c.beginPath(); c.arc(hx, hy, s * 5.2, 0, 7); c.fill();
+    c.shadowBlur = 0; c.fillStyle = "#fff"; [p.ank, p.knee, p.hip, p.sh, p.elb, p.hand].forEach(q => { const [x, y] = X(q); c.beginPath(); c.arc(x, y, s * 1.3, 0, 7); c.fill(); });
+    if (d > .9) { const [kx, ky] = X(p.knee), [hx2, hy2] = X(p.hip), y = (ky + hy2) / 2; c.setLineDash([s * 2, s * 1.5]); c.strokeStyle = "rgba(255,226,122,.85)"; c.lineWidth = s * .5; c.beginPath(); c.moveTo(hx2 - s * 6, y); c.lineTo(kx + s * 6, y); c.stroke(); c.setLineDash([]);
+      c.fillStyle = "#ffe27a"; c.font = `700 ${s * 4.2}px Inter, sans-serif`; c.fillText("PARALLELA ✓", kx + s * 7, y + s * 1.4); }
+    if (!reduce) demoRaf = requestAnimationFrame(frame);
+  };
+  demoRaf = requestAnimationFrame(frame);
+}
+// ================= ANIMAZIONI VISTE DI LATO (cinematica a segmenti) =================
+// Angoli in gradi. Arti: 0 = verso il basso, +90 = in avanti (verso destra), -90 = indietro, 180 = verso l'alto.
+// Busto (b): 0 = verticale, +90 = sdraiato in avanti (testa a destra), -90 = sdraiato all'indietro (testa a sinistra).
+const RAD = Math.PI / 180, DV = a => [Math.sin(a * RAD), Math.cos(a * RAD)], UV = b => [Math.sin(b * RAD), -Math.cos(b * RAD)];
+const addv = (o, v, l) => [o[0] + v[0] * l, o[1] + v[1] * l];
+const POSE0 = { b: 3, hd: null, tN: 0, tF: 0, sN: 0, sF: 0, fN: 90, fF: 90, aN: 6, aF: -4, eN: 10, eF: 0, lift: 0 };
+function rig(p, straight) {
+  const legs = straight ? -p.b : null, tN = legs ?? p.tN, tF = legs ?? p.tF, sN = legs ?? p.sN, sF = legs ?? p.sF;
+  const hip = [0, 0], t = UV(p.b), sh = addv(hip, t, 27), head = addv(sh, p.hd == null ? t : UV(p.hd), 9);
+  const kneeN = addv(hip, DV(tN), 22), ankleN = addv(kneeN, DV(sN), 22), toeN = addv(ankleN, DV(p.fN), 8);
+  const kneeF = addv(hip, DV(tF), 22), ankleF = addv(kneeF, DV(sF), 22), toeF = addv(ankleF, DV(p.fF), 8);
+  const elbowN = addv(sh, DV(p.aN), 14), handN = addv(elbowN, DV(p.eN), 13), elbowF = addv(sh, DV(p.aF), 14), handF = addv(elbowF, DV(p.eF), 13);
+  return { hip, sh, head, kneeN, ankleN, toeN, kneeF, ankleF, toeF, elbowN, handN, elbowF, handF };
+}
+function solveB(p, ex) { // inclina il corpo finché i due punti d'appoggio (mani/gomiti e punte) sono alla stessa altezza
+  let best = p.b, err = 1e9;
+  for (let b = 40; b <= 92; b += .25) { const q = rig({ ...p, b }, ex.straight), d = Math.abs(q[ex.level[0]][1] - q[ex.level[1]][1]); if (d < err) { err = d; best = b; } }
+  return { ...p, b: best };
+}
+function placeY(pts, lift) {
+  let m = -1e9; for (const k in pts) m = Math.max(m, pts[k][1] + (k === "head" ? 5.2 : 0));
+  const dy = 92 - m - (lift || 0); for (const k in pts) pts[k] = [pts[k][0], pts[k][1] + dy]; return pts;
+}
+const K = (p, ms, anc, ax) => ({ p, ms, anc, ax });
+const ST = { b: 3, aN: 6, aF: -4, eN: 10, eF: 0 };
+const PUSH_TOP = { b: 70, aN: 3, aF: 3, eN: 3, eF: 3, fN: 20, fF: 20 }, PUSH_BOT = { b: 80, aN: -55, aF: -55, eN: 60, eF: 60, fN: 20, fF: 20 };
+const MC_A = { b: 74, tN: 45, sN: -40, fN: 30, tF: -74, sF: -74, fF: 20, aN: 0, aF: 0, eN: 0, eF: 0 }, MC_B = { ...MC_A, tN: -74, sN: -74, fN: 20, tF: 45, sF: -40, fF: 30 };
+const RUN_A = { b: 6, tN: 80, sN: 0, fN: 60, tF: -6, sF: -6, fF: 90, aN: -40, eN: 50, aF: 35, eF: 125 }, RUN_B = { ...RUN_A, tN: -6, sN: -6, fN: 90, tF: 80, sF: 0, fF: 60, aN: 35, eN: 125, aF: -40, eF: 50 };
+const LUN_TOP = { b: 2, tN: 30, sN: -12, fN: 90, tF: -25, sF: -40, fF: 60, aN: -30, eN: 80, aF: -30, eF: 80 }, LUN_BOT = { ...LUN_TOP, tN: 85, sN: -5, tF: -20, sF: -88, fF: 72 };
+const BUR_SQ = { b: 55, tN: 100, tF: 100, sN: -40, sF: -40, aN: 12, aF: 12, eN: 12, eF: 12 }, BUR_PL = { b: 74, tN: -74, tF: -74, sN: -74, sF: -74, fN: 20, fF: 20, aN: 0, aF: 0, eN: 0, eF: 0 };
+const BUR_UP = { b: 0, fN: 30, fF: 30, aN: 175, aF: 170, eN: 178, eF: 172, lift: 7 };
+const LIE = { b: -90, hd: -92, tN: 135, tF: 135, sN: 40, sF: 40, aN: 90, aF: 90, eN: 90, eF: 90 };
+const BRI_TOP = { ...LIE, b: -115, hd: -100, tN: 115, tF: 115, sN: -20, sF: -20 }, CR_TOP = { ...LIE, b: -66, hd: -58, aN: 112, aF: 112, eN: 112, eF: 112 };
+const SUP_FLAT = { b: 90, hd: 92, tN: -90, tF: -90, sN: -90, sF: -90, fN: -90, fF: -90, aN: 90, aF: 90, eN: 90, eF: 90 };
+const SUP_UP = { b: 77, hd: 74, tN: -100, tF: -100, sN: -101, sF: -101, fN: -101, fF: -101, aN: 104, aF: 104, eN: 106, eF: 106 };
+const WALL = { b: 0, tN: 90, tF: 90, sN: 0, sF: 0, aN: 60, aF: 55, eN: 95, eF: 95 };
+const EXA = {
+  push:   { anc: "toeN", ax: 12, level: ["handN", "toeN"], straight: true, keys: [K(PUSH_TOP, 450), K(PUSH_TOP, 850), K(PUSH_BOT, 150), K(PUSH_BOT, 700)] },
+  plank:  { anc: "toeN", ax: 14, level: ["elbowN", "toeN"], straight: true, keys: [K({ b: 76, aN: 0, aF: 0, eN: 90, eF: 90, fN: 20, fF: 20 }, 1600), K({ b: 76, aN: 0, aF: 0, eN: 90, eF: 90, fN: 20, fF: 20 }, 1600)] },
+  mc:     { anc: "handN", ax: 80, keys: [K(MC_A, 340), K(MC_B, 340)] },
+  run:    { anc: "hip", ax: 50, keys: [K(RUN_A, 320), K(RUN_B, 320)] },
+  lunge:  { anc: "ankleN", ax: 60, keys: [K(LUN_TOP, 350), K(LUN_TOP, 850), K(LUN_BOT, 150), K(LUN_BOT, 700)] },
+  burpee: { anc: "ankleN", ax: 36, scale: .74, keys: [K(ST, 350), K(BUR_SQ, 320), K(BUR_PL, 320, "handN", "prev"), K(BUR_SQ, 330), K(BUR_UP, 380), K(ST, 300)] },
+  bridge: { anc: "sh", ax: 16, keys: [K(LIE, 300), K(LIE, 800), K(BRI_TOP, 600), K(BRI_TOP, 800)] },
+  crunch: { anc: "hip", ax: 50, keys: [K(LIE, 300), K(LIE, 650), K(CR_TOP, 300), K(CR_TOP, 700)] },
+  superman: { anc: "hip", ax: 40, keys: [K(SUP_FLAT, 400), K(SUP_FLAT, 700), K(SUP_UP, 1000), K(SUP_UP, 700)] },
+  wallsit: { anc: "hip", ax: 34, wall: true, keys: [K(WALL, 1500), K({ ...WALL, aN: 62, aF: 57 }, 1500)] },
+};
+function prepEx(ex) { // posiziona ogni fotogramma chiave: spostamento orizzontale per tenere fermo il punto d'appoggio
+  if (ex.ready) return ex; let prev = null;
+  ex.keys.forEach(k => {
+    k.full = { ...POSE0, ...k.p }; if (ex.level) k.full = solveB(k.full, ex);
+    const pts = placeY(rig(k.full, ex.straight), k.full.lift), anc = k.anc || ex.anc;
+    const ax = k.ax === "prev" ? prev.pts[anc][0] + prev.dx : (k.ax ?? ex.ax);
+    k.dx = ax - pts[anc][0]; k.pts = pts; prev = k;
+  });
+  ex.total = ex.keys.reduce((s, k) => s + k.ms, 0); ex.ready = true; return ex;
+}
+function rigAt(id, ms) {
+  const ex = prepEx(EXA[id]), ease = x => x < .5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2;
+  let t = ms % ex.total, i = 0; while (t > ex.keys[i].ms) { t -= ex.keys[i].ms; i++; }
+  const a = ex.keys[i], b = ex.keys[(i + 1) % ex.keys.length], e = ease(t / a.ms), p = {};
+  for (const k in POSE0) { const va = a.full[k], vb = b.full[k]; p[k] = va == null && vb == null ? null : (va ?? a.full.b) + ((vb ?? b.full.b) - (va ?? a.full.b)) * e; }
+  const q = ex.level ? solveB(p, ex) : p, pts = placeY(rig(q, ex.straight), q.lift), dx = a.dx + (b.dx - a.dx) * e;
+  for (const k in pts) pts[k] = [pts[k][0] + dx, pts[k][1]];
+  return { pts, ex };
+}
+function drawRig(c, size, id, ms, dpr) {
+  const { pts: p, ex } = rigAt(id, ms), s = size / 100, sc = ex.scale || 1, X = q => [(50 + (q[0] - 50) * sc) * s, (92 + (q[1] - 92) * sc) * s];
+  c.clearRect(0, 0, size, size); c.lineCap = "round"; c.lineJoin = "round";
+  c.strokeStyle = "rgba(111,243,255,.25)"; c.lineWidth = s * .6; c.beginPath(); c.moveTo(4 * s, 92.6 * s); c.lineTo(96 * s, 92.6 * s); c.stroke();
+  if (ex.wall) { const wx = X([p.hip[0] - 4, 0])[0]; c.strokeStyle = "rgba(111,243,255,.35)"; c.lineWidth = s * 1.2; c.beginPath(); c.moveTo(wx, 20 * s); c.lineTo(wx, 92.6 * s); c.stroke(); }
+  const seg = (a, b, col, off = 0) => { const [x1, y1] = X(a), [x2, y2] = X(b); c.strokeStyle = col; c.lineWidth = s * 2.6; c.beginPath(); c.moveTo(x1 + off, y1); c.lineTo(x2 + off, y2); c.stroke(); };
+  c.shadowColor = "#6ff3ff"; c.shadowBlur = 14 * dpr;
+  const far = "rgba(111,243,255,.4)", near = "#6ff3ff", o = -s * 2.2;
+  [[p.ankleF, p.toeF], [p.kneeF, p.ankleF], [p.hip, p.kneeF], [p.sh, p.elbowF], [p.elbowF, p.handF]].forEach(([a, b]) => seg(a, b, far, o));
+  [[p.ankleN, p.toeN], [p.kneeN, p.ankleN], [p.hip, p.kneeN], [p.hip, p.sh], [p.sh, p.elbowN], [p.elbowN, p.handN]].forEach(([a, b]) => seg(a, b, near));
+  const [hx, hy] = X(p.head); c.fillStyle = near; c.beginPath(); c.arc(hx, hy, s * 5.2, 0, 7); c.fill();
+  c.shadowBlur = 0; c.fillStyle = "#fff"; ["ankleN", "kneeN", "hip", "sh", "elbowN", "handN"].forEach(k => { const [x, y] = X(p[k]); c.beginPath(); c.arc(x, y, s * 1.3, 0, 7); c.fill(); });
+}
+function playRig(canvas, id) {
+  const c = canvas.getContext("2d"), dpr = Math.min(2, devicePixelRatio || 1), size = Math.round((canvas.clientWidth || 280) * dpr); canvas.width = canvas.height = size;
+  const t0 = performance.now(), reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const frame = now => { drawRig(c, size, id, reduce ? EXA[id].keys[0].ms + 1 : now - t0, dpr); if (!reduce) demoRaf = requestAnimationFrame(frame); };
+  demoRaf = requestAnimationFrame(frame);
+}
 function playDemo(canvas, id) {
   cancelAnimationFrame(demoRaf);
+  if (id === "squat") return playSquatSide(canvas);
+  if (EXA[id]) return playRig(canvas, id);
   const kf = POSES[id] || POSES.squat; const c = canvas.getContext("2d");
   const dpr = Math.min(2, devicePixelRatio || 1), size = canvas.clientWidth || 280; canvas.width = canvas.height = Math.round(size * dpr);
   const total = kf.reduce((t, k) => t + k[1], 0); const t0 = performance.now(); const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -802,38 +1022,43 @@ function startTutorial(sq, lv) {
   $("guide").classList.add("on"); document.body.style.overflow = "hidden"; tutRender();
 }
 function tutRender() {
-  const st = TUT.step, steps = 4;
-  const head = `<div class="gtop"><span>TUTORIAL · ${st + 1} DI ${steps}</span><button type="button" id="gx">SALTA</button></div><div class="gdots">${Array.from({ length: steps }, (_, i) => `<i class="${i < st ? "ok" : i === st ? "on" : ""}"></i>`).join("")}</div>`;
+  // Tutorial corto: 1) come funziona + squat corretto, 2) pronto (prova con la fotocamera facoltativa)
+  const st = TUT.step, steps = 2;
+  const head = `<div class="gtop"><span>Tutorial · ${st + 1} di ${steps}</span><button type="button" id="gx">salta</button></div><div class="gdots">${Array.from({ length: steps }, (_, i) => `<i class="${i < st ? "ok" : i === st ? "on" : ""}"></i>`).join("")}</div>`;
   let body = "";
-  if (st === 0) body = `<div class="gname" style="text-transform:none">Benvenuto, ${esc(S.name)}</div><div class="gtarget" style="text-transform:none">Rango di partenza: ${rankOf(TUT.lv)[0]}</div>
-    <p class="lead" style="margin-top:14px">Ogni giorno il Sistema ti dà una <b style="color:#fff">missione di 4 esercizi</b>. Li fai uno alla volta: prima vedi come si fanno, poi tocca a te.</p>
-    <ul class="gcues"><li>✅ Completi la missione: <b>guadagni EXP</b> e sali di livello</li><li>❌ La salti: domani arriva la <b>penalità</b></li><li>👁 Su squat e jumping jack <b>conta il Sistema</b> con la fotocamera</li></ul>
-    <button class="btn big" id="tn">Avanti</button>`;
-  if (st === 1) body = `<div class="gname">COSÌ SI FA LO SQUAT</div><div class="gtarget">GUARDA LO SCHELETRO</div>
-    <canvas class="gdemo" id="gdemo" aria-label="Dimostrazione animata dello squat"></canvas><div class="gdemo-cap">QUESTO È QUELLO CHE VEDE IL SISTEMA</div>
-    <ul class="gcues">${EXINFO.squat.cues.map(c => `<li>${c}</li>`).join("")}</ul><button class="btn big" id="tn">Ho capito</button>`;
-  if (st === 2) body = `<div class="gname">POSIZIONA IL TELEFONO</div>
-    <div class="gphone" aria-hidden="true"><div class="ph"></div><div class="dist"><b>2 METRI</b></div><canvas class="man" id="gman2"></canvas></div>
-    <ul class="gcues"><li>📱 Appoggia il telefono <b>a terra, in verticale</b>, contro un muro o un oggetto</li><li>🧍 Allontanati di <b>2 metri</b>: il Sistema deve vederti dalla testa ai piedi</li><li>💡 Meglio con la <b>luce davanti</b> a te, non dietro</li><li>🟩 Entra nella <b>sagoma tratteggiata</b>: quando diventa verde, il Sistema ti ha visto</li></ul>
-    <button class="btn big" id="tn">Avanti</button>`;
-  if (st === 3) body = TUT.trialOk
-    ? `<div class="gname" style="color:var(--ok);text-transform:none">Perfetto, sei pronto.</div><p class="lead">Il Sistema ti vede e conta le tue ripetizioni. Ora la missione di oggi.</p><button class="btn big accent" id="tgo">Inizia la missione</button><button class="gsec" id="tlater">La faccio più tardi</button>`
-    : `<div class="gname">PROVA: 3 SQUAT</div><p class="lead">Facciamo una prova veloce con la fotocamera. Non conta per la missione: serve solo a vedere che il Sistema ti riconosce.</p>
-    <canvas class="gdemo" id="gdemo" aria-label="Dimostrazione animata dello squat"></canvas>
-    <button class="btn big accent" id="ttry">Prova ora</button><button class="gsec" id="tskip">Salta la prova</button>`;
+  if (st === 0) body = `<div class="gname" style="text-transform:none">Benvenuto, ${esc(S.name)}</div><div class="gtarget" style="text-transform:none">Rango di partenza: ${rankOf(TUT.lv)[0]} · ogni giorno 4 esercizi</div>
+    <canvas class="gdemo" id="gdemo" aria-label="Dimostrazione animata dello squat corretto, vista di lato"></canvas><div class="gdemo-cap">LO SQUAT CORRETTO · VISTA DI LATO</div>
+    <ul class="gcues">${EXINFO.squat.cues.map(c => `<li>${c}</li>`).join("")}</ul>
+    <p class="lead" style="margin-top:14px">Completi la missione: <b>guadagni EXP</b>. La salti: domani arriva la <b>penalità</b>.</p>
+    <button class="btn big" id="tn">Ho capito</button>`;
+  if (st === 1) body = TUT.trialOk
+    ? `<div class="gname" style="color:var(--ok);text-transform:none">Perfetto, il Sistema ti vede.</div><p class="lead">Ora la missione di oggi.</p><button class="btn big accent" id="tgo">Inizia la missione</button><button class="gsec" id="tlater">La faccio più tardi</button>`
+    : `<div class="gname" style="text-transform:none">Sei pronto.</div>
+    <p class="lead">Su squat e jumping jack <b>conta il Sistema</b> con la fotocamera: le immagini restano sul telefono. Per gli altri esercizi conti tu o parte il timer.</p>
+    <button class="btn big accent" id="tgo">Inizia la missione</button>
+    <button class="gsec" id="ttry">Prova la fotocamera (3 squat)</button>
+    <p class="fine">Per la prova: telefono a terra in verticale, tu a 2 metri, luce davanti.</p>
+    <button class="gsec" id="tlater">La faccio più tardi</button>`;
   gin().innerHTML = head + body;
   if ($("gdemo")) playDemo($("gdemo"), "squat"); else cancelAnimationFrame(demoRaf);
-  if ($("gman2")) { const c = $("gman2"); playDemo(c, "squat"); }
   $("gx").onclick = () => tutEnd(false);
   if ($("tn")) $("tn").onclick = () => { TUT.step++; tutRender(); };
   if ($("ttry")) $("ttry").onclick = () => { initAudio(); GD.trial = { id: "squat", name: "Squat di prova", target: 3, done: 0, ai: 0 }; openCamera(GD.trial, "t"); };
-  if ($("tskip")) $("tskip").onclick = () => { TUT.trialOk = true; tutRender(); };
   if ($("tgo")) $("tgo").onclick = () => { tutEnd(true); };
   if ($("tlater")) $("tlater").onclick = () => tutEnd();
 }
-function tutorialAfterTrial(aborted) { TUT.trialOk = !aborted && GD.trial && GD.trial.done >= 1; if (!TUT.trialOk) TUT.step = 3; tutRender(); if (!TUT.trialOk) { const p = document.querySelector("#gin .lead"); if (p) p.textContent = "La prova non è finita. Controlla di essere a 2 metri e con tutto il corpo nell'inquadratura, poi riprova."; } }
+function tutorialAfterTrial(aborted) { TUT.trialOk = !aborted && GD.trial && GD.trial.done >= 1; TUT.step = 1; tutRender(); if (!TUT.trialOk) { const p = document.querySelector("#gin .lead"); if (p) p.textContent = "La prova non è finita. Controlla di essere a 2 metri e con tutto il corpo nell'inquadratura, poi riprova. Oppure inizia la missione e conta da solo."; } }
 function tutEnd(startQuest) { S.tut = true; store.set(S); GD.on = false; GD.mode = "quest"; cancelAnimationFrame(demoRaf); $("guide").classList.remove("on"); document.body.style.overflow = ""; render(); if (startQuest) guideOpen("q"); }
 const esc = t => String(t).replace(/[&<>"]/g, ch => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[ch]));
+// Anteprima di controllo delle animazioni per il coach/tester: apri index.html#rigsheet
+if (location.hash === "#rigsheet") {
+  const ids = Object.keys(EXA), cell = 200, cols = 5, S2 = document.createElement("canvas"); S2.width = cell * cols; S2.height = cell * ids.length;
+  const g = S2.getContext("2d"); g.fillStyle = "#000"; g.fillRect(0, 0, S2.width, S2.height);
+  ids.forEach((id, r) => { const tot = prepEx(EXA[id]).total; for (let k = 0; k < cols; k++) { const tmp = document.createElement("canvas"); tmp.width = tmp.height = cell;
+    drawRig(tmp.getContext("2d"), cell, id, tot * k / cols + 1, 1); g.drawImage(tmp, k * cell, r * cell); }
+    g.fillStyle = "#ffe27a"; g.font = "700 18px Inter, sans-serif"; g.fillText(id, 8, r * cell + 22); g.strokeStyle = "#333"; g.strokeRect(0, r * cell, S2.width, cell); });
+  document.body.innerHTML = ""; document.body.style.background = "#000"; S2.style.display = "block"; document.body.appendChild(S2);
+}
 </script>
 </body>
 </html>
