@@ -483,8 +483,8 @@ const MULT = { E: 1, D: 1.5, C: 2, B: 2.7, A: 3.5, S: 5 };
 const GOALS = {
   // ex[0] è l'esercizio fisso del percorso; ogni giorno se ne aggiungono 3 a rotazione dagli altri
   brucia:     { name: "BRUCIA", ic: "🔥", desc: "Perdere peso e definirti", ex: [["squat", "Squat", 15], ["jj", "Jumping jack", 30], ["mc", "Mountain climber", 20], ["run", "Corsa sul posto (sec)", 45], ["crunch", "Crunch", 12], ["bridge", "Ponte glutei", 12]] },
-  forza:      { name: "FORZA", ic: "💪", desc: "Mettere massa e diventare più forte", ex: [["push", "Flessioni", 8], ["squat", "Squat", 15], ["lunge", "Affondi", 10], ["plank", "Plank (sec)", 30], ["bridge", "Ponte glutei", 12], ["wallsit", "Sedia al muro (sec)", 30], ["superman", "Superman", 10]] },
-  resistenza: { name: "RESISTENZA", ic: "⚡", desc: "Più fiato, più energia, più costanza", ex: [["squat", "Squat", 15], ["burpee", "Burpees", 6], ["jj", "Jumping jack", 25], ["plank", "Plank (sec)", 30], ["mc", "Mountain climber", 20], ["wallsit", "Sedia al muro (sec)", 30]] },
+  forza:      { name: "FORZA", ic: "💪", desc: "Mettere massa e diventare più forte", ex: [["push", "Flessioni", 8], ["squat", "Squat", 15], ["lunge", "Affondi", 10], ["plank", "Plank (sec)", 30], ["bridge", "Ponte glutei", 12]] },   // superman e sedia al muro tolti finché non ci sono video dimostrativi adatti
+  resistenza: { name: "RESISTENZA", ic: "⚡", desc: "Più fiato, più energia, più costanza", ex: [["squat", "Squat", 15], ["burpee", "Burpees", 6], ["jj", "Jumping jack", 25], ["plank", "Plank (sec)", 30], ["mc", "Mountain climber", 20]] },
 };
 const AI_EXERCISES = { squat: true, jj: true };   // exercises the camera can verify
 const TIME_EXERCISES = { run: true, plank: true, wallsit: true };  // exercises measured in seconds
@@ -1096,8 +1096,20 @@ function playRig(canvas, id) {
   const frame = now => { drawRig(c, size, id, reduce ? EXA[id].keys[0].ms + 1 : now - t0, dpr); if (!reduce) demoRaf = requestAnimationFrame(frame); };
   demoRaf = requestAnimationFrame(frame);
 }
+// Dimostrazioni con persone reali (video Pexels, licenza gratuita), controllate dal coach. Velocità ridotta dove il movimento è rapido.
+const EXVIDEO = { squat: 1, push: .9, lunge: 1, plank: 1, burpee: .7, jj: .75, mc: .55, run: .8, bridge: .9, crunch: .9 };
+function playVideoDemo(canvas, id) {
+  const old = canvas.parentNode.querySelector("video.gdemo"); if (old) old.remove();
+  const v = document.createElement("video"); v.className = "gdemo"; v.src = "esercizi/" + id + ".mp4"; v.muted = true; v.loop = true; v.autoplay = true; v.playsInline = true;
+  v.setAttribute("playsinline", ""); v.setAttribute("aria-label", "Video dimostrativo dell'esercizio");
+  v.style.cssText = "object-fit:cover;filter:saturate(.85) contrast(1.05) brightness(.92);border:1px solid rgba(111,243,255,.35);box-shadow:0 0 30px rgba(111,243,255,.12)";
+  v.addEventListener("loadedmetadata", () => { v.playbackRate = EXVIDEO[id]; v.play().catch(() => {}); });
+  canvas.style.display = "none"; canvas.after(v);
+  const cap = canvas.parentNode.querySelector(".gdemo-cap"); if (cap) cap.textContent = EXVIDEO[id] < 1 ? "COME SI FA · VIDEO RALLENTATO" : "COME SI FA · VIDEO DIMOSTRATIVO";
+}
 function playDemo(canvas, id) {
   cancelAnimationFrame(demoRaf);
+  if (EXVIDEO[id] && canvas.classList.contains("gdemo")) return playVideoDemo(canvas, id);
   if (id === "squat") return playSquatSide(canvas);
   if (EXA[id]) return playRig(canvas, id);
   const kf = POSES[id] || POSES.squat; const c = canvas.getContext("2d");
