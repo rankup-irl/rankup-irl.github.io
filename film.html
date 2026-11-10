@@ -1,0 +1,315 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>RANKUP · Il Sistema ti ha scelto</title>
+<meta name="description" content="L'allenamento a casa che ti fa salire di rango. La fotocamera conta ogni ripetizione. Scopri il tuo rango in 30 secondi.">
+<meta name="theme-color" content="#000000">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;800&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+/* "Il Sistema ti ha scelto": il protagonista è l'app. Nero profondo, luce azzurra del Sistema, oro per il rango.
+   Display: Unbounded. Testo e interfaccia: Inter. Dati: JetBrains Mono. */
+:root{--bg:#000;--ink:#f5f5f7;--mute:#8d939c;--line:rgba(255,255,255,.09);--sys:#6ff3ff;--gold:#ffe27a;--ok:#7dffa8;--red:#ff6b6b;
+  --f-disp:"Unbounded","Inter",system-ui,sans-serif;--f-ui:"Inter",-apple-system,system-ui,sans-serif;--f-mono:"JetBrains Mono",ui-monospace,monospace;color-scheme:dark}
+*{box-sizing:border-box;margin:0;padding:0}
+html{background:var(--bg)}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-ui);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit}
+.mono{font-family:var(--f-mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase}
+
+.hdr{position:fixed;top:0;left:0;right:0;z-index:30;display:flex;align-items:center;justify-content:space-between;transition:background .3s;
+  padding:calc(env(safe-area-inset-top) + 14px) max(18px,env(safe-area-inset-right)) 12px max(18px,env(safe-area-inset-left))}
+.hdr.solid{background:rgba(0,0,0,.62);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.logo{font-family:var(--f-disp);font-weight:800;font-size:15px;letter-spacing:.14em;text-decoration:none}.logo b{color:var(--sys)}
+.go{font:600 14px var(--f-ui);color:#001a1f;background:var(--sys);border-radius:999px;padding:9px 16px;text-decoration:none}
+
+/* ---------- film ---------- */
+#film{position:relative;height:100vh;height:100svh}
+.stage{position:absolute;inset:0;overflow:hidden;perspective:1400px}
+.glow{position:absolute;left:50%;top:58%;width:130vmin;height:130vmin;transform:translate(-50%,-50%);border-radius:50%;
+  background:radial-gradient(closest-side,rgba(111,243,255,.22),rgba(47,123,255,.08) 45%,transparent 70%);opacity:0;will-change:opacity,background}
+.floor{position:absolute;left:0;right:0;top:78%;height:1px;background:linear-gradient(90deg,transparent,rgba(111,243,255,.25),transparent);opacity:.6}
+.beat{position:absolute;left:0;right:0;top:calc(env(safe-area-inset-top) + 74px);padding:0 max(22px,env(safe-area-inset-left));text-align:center;opacity:0;will-change:opacity,transform;pointer-events:none;z-index:3}
+.beat h1,.beat h2{font-family:var(--f-disp);font-weight:800;letter-spacing:-.035em;line-height:1.02;text-wrap:balance}
+.beat h1{font-size:clamp(34px,8.6vw,84px)}
+.beat h2{font-size:clamp(28px,7vw,64px)}
+.beat p{margin:12px auto 0;max-width:32ch;color:var(--mute);font-size:clamp(15px,2vw,19px);line-height:1.45}
+.hl{color:var(--sys)}.gd{color:var(--gold)}
+.beat.end{top:auto;bottom:calc(env(safe-area-inset-bottom) + 30px)}
+.ctas{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:20px}
+.btn{display:inline-block;font:600 16px var(--f-ui);text-decoration:none;border-radius:999px;padding:16px 24px;border:0;cursor:pointer;transition:transform .15s}
+.btn:active{transform:scale(.97)}.btn.pri{color:#001a1f;background:linear-gradient(90deg,var(--sys),#a9f8ff)}.btn.sec{color:var(--ink);background:rgba(255,255,255,.1)}
+.btn:focus-visible{outline:2px solid var(--sys);outline-offset:3px}
+
+/* iPhone */
+.phonewrap{position:absolute;left:50%;top:60%;transform-style:preserve-3d;will-change:transform;z-index:2}
+.phone{--h:min(56vh,600px);height:var(--h);width:calc(var(--h)*.47);border-radius:calc(var(--h)*.11);position:relative;transform:translate(-50%,-50%);
+  background:linear-gradient(145deg,#3a3d44,#16181c 30%,#0b0c0f 70%,#2b2e34);padding:calc(var(--h)*.016);
+  box-shadow:0 40px 120px -30px rgba(0,0,0,.9),0 0 0 1px rgba(255,255,255,.08),inset 0 0 0 1px rgba(255,255,255,.06)}
+.screen{position:relative;width:100%;height:100%;border-radius:calc(var(--h)*.095);overflow:hidden;background:#000;font-size:calc(var(--h)*.0235)}
+.island{position:absolute;top:2.2%;left:50%;transform:translateX(-50%);width:31%;height:4.3%;border-radius:99px;background:#000;z-index:10}
+.scr{position:absolute;inset:0;opacity:0;will-change:opacity}
+.sbar{position:absolute;top:2.6%;left:9%;right:9%;display:flex;justify-content:space-between;font-weight:600;font-size:1.05em;z-index:9}
+/* blocco schermo */
+#s0{background:radial-gradient(ellipse at 50% 120%,#0b2a3a,#000 65%)}
+.lockt{position:absolute;top:13%;left:0;right:0;text-align:center}
+.lockt .d{font-size:1.1em;color:#cfd6dd;font-weight:500}.lockt .t{font-size:5.6em;font-weight:700;letter-spacing:-.04em;line-height:1;margin-top:.1em}
+.notif{position:absolute;left:4%;right:4%;top:44%;padding:1em 1.1em;border-radius:1.4em;background:rgba(40,44,52,.72);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);
+  display:flex;gap:.9em;align-items:center;opacity:0;transform:translateY(-1.5em) scale(.96)}
+.notif .ic{width:2.8em;height:2.8em;border-radius:.7em;background:#000;border:1px solid rgba(111,243,255,.5);display:grid;place-items:center;font-family:var(--f-disp);font-weight:800;font-size:.95em;color:var(--sys);flex:none}
+.notif b{display:block;font-size:.95em}.notif span{font-size:.95em;color:#d7dde4}
+.notif small{display:block;font-size:.8em;color:#9aa3ad;margin-bottom:.15em;letter-spacing:.02em}
+/* app: missione */
+#s1{background:radial-gradient(ellipse at 50% 0%,rgba(111,243,255,.14),#000 55%)}
+.app{position:absolute;inset:11% 6% 6%}
+.app .hello small{color:var(--mute);font-size:.95em}.app .hello h3{font-size:2.1em;letter-spacing:-.04em;margin:.1em 0 .6em}
+.card{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);border-radius:1.4em;padding:1.1em}
+.qh{display:flex;align-items:center;gap:.9em}
+.ring{--p:0;width:3.6em;height:3.6em;border-radius:50%;background:conic-gradient(var(--sys) calc(var(--p)*360deg),rgba(255,255,255,.1) 0);display:grid;place-items:center;flex:none;
+  -webkit-mask:radial-gradient(farthest-side,transparent calc(100% - .4em),#000 calc(100% - .4em + 1px));mask:radial-gradient(farthest-side,transparent calc(100% - .4em),#000 calc(100% - .4em + 1px))}
+.ringwrap{position:relative;width:3.6em;height:3.6em}.ringwrap b{position:absolute;inset:0;display:grid;place-items:center;font-size:.85em}
+.qh .k{font-size:.7em;letter-spacing:.14em;color:var(--sys);font-weight:700}.qh h4{font-size:1.45em;letter-spacing:-.03em}
+.row{display:flex;align-items:center;gap:.8em;padding:.75em 0;border-bottom:1px solid rgba(255,255,255,.08);opacity:0;transform:translateX(1em)}
+.row:last-child{border-bottom:0}
+.row .ck{width:1.4em;height:1.4em;border-radius:50%;border:1.5px solid #3a3a3c;display:grid;place-items:center;font-size:.75em;font-weight:800;color:#001a1f;flex:none}
+.row.done .ck{background:var(--sys);border-color:var(--sys)}
+.row .n{flex:1;font-weight:600}.row .v{color:var(--mute);font-variant-numeric:tabular-nums}
+.cta{margin-top:1em;text-align:center;padding:.95em;border-radius:99px;background:linear-gradient(90deg,var(--sys),#a9f8ff);color:#001a1f;font-weight:700}
+/* fotocamera */
+#s2{background:#05070b}
+.cam{position:absolute;inset:0;background:radial-gradient(ellipse at 40% 45%,#1d2733,#06080c 60%),#06080c}
+.bokeh{position:absolute;border-radius:50%;filter:blur(18px);opacity:.5}
+.chud{position:absolute;top:10%;left:5%;right:5%;display:flex;justify-content:space-between}
+.cbox{background:rgba(20,22,26,.6);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.1);border-radius:1.1em;padding:.6em .9em;min-width:5.4em}
+.cbox small{display:block;font-size:.65em;letter-spacing:.14em;color:var(--mute);font-weight:600}
+.cbox b{font-size:2.6em;font-weight:700;letter-spacing:-.04em;line-height:1.05;font-variant-numeric:tabular-nums}
+.depth{position:absolute;right:6%;top:36%;height:30%;width:.7em;border-radius:1em;background:rgba(255,255,255,.12);overflow:hidden}
+.depth i{position:absolute;left:0;right:0;bottom:0;height:0;background:linear-gradient(0deg,#2f7bff,var(--sys))}
+.depth s{position:absolute;left:0;right:0;bottom:70%;height:2px;background:var(--gold)}
+.dlab{position:absolute;right:3.2%;top:30%;font-size:.6em;letter-spacing:.12em;color:var(--mute);font-weight:600}
+.bigg{position:absolute;inset:0;display:grid;place-items:center;font-weight:800;font-size:9em;letter-spacing:-.05em;opacity:0}
+.cmsg{position:absolute;left:5%;right:5%;bottom:6%;text-align:center;font-weight:700;font-size:1.05em;padding:.9em;border-radius:1.1em;background:rgba(20,22,26,.7);border:1px solid rgba(125,255,168,.4);color:var(--ok)}
+.recdot{position:absolute;top:10.5%;left:50%;transform:translateX(-50%);display:flex;gap:.4em;align-items:center;font-size:.7em;letter-spacing:.14em;color:#fff;font-weight:600}
+.recdot i{width:.6em;height:.6em;border-radius:50%;background:var(--red)}
+/* level up */
+#s3{background:radial-gradient(ellipse at 50% 45%,rgba(255,226,122,.22),#000 60%)}
+.lv{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.lv .k{font-size:.75em;letter-spacing:.2em;color:var(--gold);font-weight:700}
+.lv h4{font-size:3.4em;font-weight:800;letter-spacing:-.05em;background:linear-gradient(180deg,#fff,var(--gold));-webkit-background-clip:text;background-clip:text;color:transparent;margin:.2em 0}
+.gring{--p:0;width:8em;height:8em;border-radius:50%;background:conic-gradient(var(--gold) calc(var(--p)*360deg),rgba(255,226,122,.15) 0);position:relative;
+  -webkit-mask:radial-gradient(farthest-side,transparent calc(100% - .55em),#000 calc(100% - .55em + 1px));mask:radial-gradient(farthest-side,transparent calc(100% - .55em),#000 calc(100% - .55em + 1px))}
+.gwrap{position:relative;width:8em;height:8em;margin:.8em 0}.gwrap b{position:absolute;inset:0;display:grid;place-items:center;font-size:3.6em;font-weight:800}
+.lv .xp{font-size:1.4em;font-weight:700;color:var(--gold)}
+/* rango */
+#s4{background:radial-gradient(ellipse at 50% 40%,rgba(255,226,122,.16),#000 62%)}
+.rk{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.rk .k{font-size:.75em;letter-spacing:.2em;color:var(--gold);font-weight:700}
+.rk .L{font-family:var(--f-disp);font-weight:800;font-size:13em;line-height:1;background:linear-gradient(180deg,#fff 15%,var(--gold));-webkit-background-clip:text;background-clip:text;color:transparent}
+.rk .strip{display:flex;gap:.5em;margin-top:.4em}.rk .strip span{width:2.2em;height:2.2em;border-radius:.6em;display:grid;place-items:center;font-weight:800;background:rgba(255,255,255,.05);opacity:.5}
+
+.readout{position:fixed;left:max(18px,env(safe-area-inset-left));bottom:calc(env(safe-area-inset-bottom) + 16px);z-index:30;display:flex;align-items:center;gap:10px;color:var(--mute);pointer-events:none;transition:opacity .4s}
+.readout i{display:block;width:64px;height:2px;background:rgba(255,255,255,.12);position:relative;overflow:hidden}.readout i b{position:absolute;inset:0;width:0;background:var(--sys)}
+.fade{position:absolute;left:0;right:0;bottom:0;height:45%;background:linear-gradient(180deg,transparent,#000);opacity:0;pointer-events:none;z-index:4}
+
+/* ---------- contenuti ---------- */
+.wrap{max-width:1080px;margin:0 auto;padding:0 max(20px,env(safe-area-inset-right)) 0 max(20px,env(safe-area-inset-left))}
+section.c{padding:96px 0 0}
+.kicker{color:var(--sys);margin-bottom:14px}
+.c h2{font-family:var(--f-disp);font-weight:800;font-size:clamp(30px,6vw,58px);letter-spacing:-.035em;line-height:1.04;text-wrap:balance;max-width:16ch}
+.c .lead{color:var(--mute);font-size:18px;line-height:1.5;max-width:44ch;margin-top:16px}
+.steps{display:grid;gap:12px;margin-top:36px}
+@media(min-width:820px){.steps{grid-template-columns:repeat(3,1fr)}}
+.step{border:1px solid var(--line);border-radius:24px;padding:24px;background:rgba(255,255,255,.03)}
+.step .mono{color:var(--sys)}.step h3{font-family:var(--f-disp);font-weight:600;font-size:21px;letter-spacing:-.02em;margin:14px 0 8px}.step p{color:var(--mute);line-height:1.5}
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:36px}
+@media(min-width:820px){.stats{grid-template-columns:repeat(4,1fr)}}
+.stat{border:1px solid var(--line);border-radius:24px;padding:22px;background:rgba(255,255,255,.03)}
+.stat b{display:block;font-family:var(--f-disp);font-weight:800;font-size:clamp(34px,6vw,52px);letter-spacing:-.04em;line-height:1}.stat span{color:var(--mute);font-size:14px;line-height:1.4;display:block;margin-top:8px}
+.ladder{margin-top:36px;border-top:1px solid var(--line)}
+.rung{display:grid;grid-template-columns:64px 1fr auto;align-items:center;gap:16px;padding:18px 0;border-bottom:1px solid var(--line)}
+.rung .L{font-family:var(--f-disp);font-weight:800;font-size:38px;line-height:1}.rung .t{font-weight:600;font-size:17px}.rung .s{color:var(--mute);font-size:14px;margin-top:2px}
+.rung .n{font-family:var(--f-mono);font-size:13px;color:var(--mute);text-align:right}.rung.top{background:linear-gradient(90deg,rgba(255,226,122,.08),transparent)}
+.marq{margin-top:36px;overflow:hidden;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:18px 0}
+.marq .tr{display:flex;gap:40px;width:max-content;font-family:var(--f-disp);font-weight:600;font-size:clamp(22px,4vw,34px);letter-spacing:-.02em;white-space:nowrap}.marq .tr span:nth-child(odd){color:var(--sys)}
+.why{display:flex;flex-wrap:wrap;gap:10px;margin-top:28px}.why span{padding:10px 16px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.03);font-weight:600;font-size:14px}
+.final{margin:110px 0 0;padding:56px 24px;border-radius:32px;text-align:center;background:radial-gradient(ellipse at 50% 0%,rgba(255,226,122,.14),transparent 65%),rgba(255,255,255,.03);border:1px solid var(--line)}
+.final h2{margin:0 auto;max-width:14ch}.final .q{font-family:var(--f-disp);font-weight:800;font-size:110px;line-height:1;background:linear-gradient(180deg,#fff 20%,var(--gold));-webkit-background-clip:text;background-clip:text;color:transparent}
+.foot{padding:40px 0 calc(env(safe-area-inset-bottom) + 40px);text-align:center;color:var(--mute);font-size:13px}.foot a{color:var(--mute);text-decoration:none;margin:0 8px}
+.reveal{opacity:0;transform:translateY(24px)}
+@media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none}}
+@media (min-width:900px){.phone{--h:min(62vh,640px)}.phonewrap{top:62%}}
+</style>
+</head>
+<body>
+<header class="hdr" id="hdr"><a class="logo" href="./film.html">RANK<b>UP</b></a><a class="go" href="./?start">Inizia</a></header>
+<div class="readout mono" id="readout"><span id="chap">01 · Notifica</span><i><b id="bar"></b></i></div>
+
+<section id="film" aria-label="Presentazione dell'app RANKUP">
+  <div class="stage">
+    <div class="glow" id="glow"></div><div class="floor" id="floor"></div>
+
+    <div class="beat" data-in="-0.1" data-peak="0" data-out="0.14"><div class="mono" style="color:var(--sys);margin-bottom:12px">Notifica del Sistema</div><h1>Il Sistema<br>ti ha scelto.</h1><p>L'allenamento a casa che ti fa salire di rango.</p></div>
+    <div class="beat" data-in="0.18" data-peak="0.24" data-out="0.36"><h2>Una missione<br>al giorno.</h2><p>Quattro esercizi. Pochi minuti. Zero attrezzi.</p></div>
+    <div class="beat" data-in="0.4" data-peak="0.46" data-out="0.6"><h2>Ti guarda. Conta.<br><span class="hl">Giudica.</span></h2><p>Mezzo squat non vale. Le immagini restano sul tuo telefono.</p></div>
+    <div class="beat" data-in="0.63" data-peak="0.68" data-out="0.77"><h2>Ogni giorno,<br><span class="gd">più forte.</span></h2><p>EXP, livelli, statistiche. Salti un giorno? Arriva la penalità.</p></div>
+    <div class="beat end" data-in="0.84" data-peak="0.9" data-out="2"><h2>Il tuo rango non te lo<br><span class="gd">regala nessuno.</span></h2><div class="ctas"><a class="btn pri" href="rango.html">Scopri il tuo rango</a><a class="btn sec" href="./?start">Inizia ora</a></div></div>
+
+    <div class="phonewrap" id="pw"><div class="phone"><div class="screen" id="screen">
+      <div class="island"></div>
+      <div class="sbar"><span id="sbt">9:41</span><span>●●● ▮</span></div>
+      <div class="scr" id="s0"><div class="lockt"><div class="d" id="ldate">Lunedì</div><div class="t" id="ltime">9:41</div></div>
+        <div class="notif" id="notif"><div class="ic">R</div><div><small>RANKUP · ora</small><b>Notifica del Sistema</b><span>Sei stato scelto. La tua prima missione è pronta.</span></div></div></div>
+      <div class="scr" id="s1"><div class="app">
+        <div class="hello"><small id="adate">Lunedì</small><h3>Ciao, giocatore</h3></div>
+        <div class="card"><div class="qh"><div class="ringwrap"><div class="ring" id="qring"></div><b id="qn">0/4</b></div><div><div class="k">NOTIFICA DEL SISTEMA</div><h4>Missione di oggi</h4></div></div>
+          <div class="row" data-i="0"><span class="ck">✓</span><span class="n">Squat</span><span class="v">15</span></div>
+          <div class="row" data-i="1"><span class="ck">✓</span><span class="n">Flessioni</span><span class="v">8</span></div>
+          <div class="row" data-i="2"><span class="ck">✓</span><span class="n">Affondi</span><span class="v">10</span></div>
+          <div class="row" data-i="3"><span class="ck">✓</span><span class="n">Plank</span><span class="v">30 sec</span></div></div>
+        <div class="cta">Inizia la missione</div></div></div>
+      <div class="scr" id="s2"><div class="cam">
+        <div class="bokeh" style="width:40%;height:22%;left:10%;top:30%;background:#2a3d52"></div><div class="bokeh" style="width:30%;height:18%;right:8%;top:55%;background:#3a2f22"></div><div class="bokeh" style="width:50%;height:20%;left:20%;bottom:12%;background:#1b2a3a"></div>
+        <div class="recdot"><i></i>IL SISTEMA TI VEDE</div>
+        <div class="chud"><div class="cbox"><small>SQUAT</small><b id="cn">0</b></div><div class="cbox"><small>VOTO</small><b id="cg" style="color:var(--gold)">–</b></div></div>
+        <div class="dlab">PROFONDITÀ</div><div class="depth"><s></s><i id="dep"></i></div>
+        <div class="bigg" id="big">S</div>
+        <div class="cmsg" id="cmsg">Ripetizione perfetta</div></div></div>
+      <div class="scr" id="s3"><div class="lv"><div class="k">MISSIONE COMPLETATA</div><h4>LEVEL UP</h4><div class="gwrap"><div class="gring" id="gring"></div><b id="lvn">1</b></div><div class="xp">+250 EXP</div></div></div>
+      <div class="scr" id="s4"><div class="rk"><div class="k">VALUTAZIONE DEL RANGO</div><div class="L" id="rl">E</div>
+        <div class="strip"><span style="color:#9aa3b2">E</span><span style="color:#6edc8c">D</span><span style="color:#5aaaff">C</span><span style="color:#b478ff">B</span><span style="color:#ff9646">A</span><span style="color:#ffd75a">S</span></div></div></div>
+    </div></div></div>
+    <div class="fade" id="fade"></div>
+  </div>
+</section>
+
+<main class="wrap">
+  <section class="c">
+    <div class="kicker mono reveal">Come funziona</div>
+    <h2 class="reveal">Ogni giorno più forte. Senza palestra.</h2>
+    <div class="steps">
+      <div class="step reveal"><div class="mono">01 · Missione</div><h3>Ricevi la missione</h3><p>Quattro esercizi a corpo libero calibrati sul tuo rango. Cambiano ogni giorno.</p></div>
+      <div class="step reveal"><div class="mono">02 · Verifica</div><h3>Il Sistema ti guarda</h3><p>La fotocamera conta squat e jumping jack e dà un voto alla tecnica, da E a S.</p></div>
+      <div class="step reveal"><div class="mono">03 · Ascesa</div><h3>Sali di rango</h3><p>EXP, livelli, statistiche. Se salti un giorno, arriva la penalità.</p></div>
+    </div>
+  </section>
+  <section class="c">
+    <div class="kicker mono reveal">In numeri</div>
+    <h2 class="reveal">Fatto per chi non ha tempo né palestra.</h2>
+    <div class="stats">
+      <div class="stat reveal"><b>4</b><span>esercizi al giorno, sempre diversi</span></div>
+      <div class="stat reveal"><b>12</b><span>esercizi a corpo libero, zero attrezzi</span></div>
+      <div class="stat reveal"><b>6</b><span>ranghi, da E a S</span></div>
+      <div class="stat reveal"><b>0 €</b><span>per iniziare, nessun abbonamento</span></div>
+    </div>
+  </section>
+  <section class="c">
+    <div class="kicker mono reveal">I ranghi</div>
+    <h2 class="reveal">Tutti partono da E.</h2>
+    <p class="lead reveal">Il test iniziale: quanti squat fai in 30 secondi?</p>
+    <div class="ladder">
+      <div class="rung reveal"><div class="L" style="color:#9aa3b2">E</div><div><div class="t">Il divano umano</div><div class="s">Il punto di partenza di tutti</div></div><div class="n">0–9</div></div>
+      <div class="rung reveal"><div class="L" style="color:#6edc8c">D</div><div><div class="t">Il pigro risvegliato</div><div class="s">Il corpo si ricorda come si fa</div></div><div class="n">10–14</div></div>
+      <div class="rung reveal"><div class="L" style="color:#5aaaff">C</div><div><div class="t">Lo sfidante</div><div class="s">Le missioni diventano serie</div></div><div class="n">15–19</div></div>
+      <div class="rung reveal"><div class="L" style="color:#b478ff">B</div><div><div class="t">Il cacciatore di EXP</div><div class="s">La costanza diventa abitudine</div></div><div class="n">20–24</div></div>
+      <div class="rung reveal"><div class="L" style="color:#ff9646">A</div><div><div class="t">L'inarrestabile</div><div class="s">Pochi arrivano fin qui</div></div><div class="n">25–29</div></div>
+      <div class="rung top reveal"><div class="L" style="color:#ffd75a">S</div><div><div class="t">Leggenda del Sistema</div><div class="s">Il vertice</div></div><div class="n">30+</div></div>
+    </div>
+  </section>
+  <section class="c"><div class="kicker mono reveal">Gli esercizi</div><h2 class="reveal">Dodici esercizi. Zero attrezzi.</h2></section>
+</main>
+<div class="marq" aria-label="Elenco esercizi"><div class="tr" id="marq">
+  <span>Squat</span><span>Flessioni</span><span>Affondi</span><span>Plank</span><span>Burpees</span><span>Jumping jack</span><span>Mountain climber</span><span>Ponte glutei</span><span>Crunch</span><span>Superman</span><span>Sedia al muro</span><span>Corsa sul posto</span>
+  <span aria-hidden="true">Squat</span><span aria-hidden="true">Flessioni</span><span aria-hidden="true">Affondi</span><span aria-hidden="true">Plank</span><span aria-hidden="true">Burpees</span><span aria-hidden="true">Jumping jack</span><span aria-hidden="true">Mountain climber</span><span aria-hidden="true">Ponte glutei</span><span aria-hidden="true">Crunch</span><span aria-hidden="true">Superman</span><span aria-hidden="true">Sedia al muro</span><span aria-hidden="true">Corsa sul posto</span>
+</div></div>
+<main class="wrap">
+  <section class="c" style="padding-top:72px">
+    <h2 class="reveal">La palestra è facoltativa. Il Sistema no.</h2>
+    <div class="why reveal"><span>🏠 Camera, salotto, parco</span><span>⏱ Pochi minuti</span><span>💸 Gratis</span><span>👁 Non puoi barare</span><span>🔒 Le immagini restano sul telefono</span></div>
+  </section>
+  <div class="final reveal"><div class="mono" style="color:var(--gold);margin-bottom:6px">Il tuo rango</div><div class="q">?</div><h2>30 secondi per scoprirlo.</h2>
+    <div class="ctas"><a class="btn pri" href="rango.html">Scopri il tuo rango</a><a class="btn sec" href="./?start">Inizia la prima missione</a></div></div>
+  <footer class="foot"><a href="https://www.tiktok.com/@rankup.irl" target="_blank" rel="noopener">@rankup.irl</a>·<a href="privacy.html">Privacy e salute</a></footer>
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
+<script>
+(function () {
+  const $ = id => document.getElementById(id), clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
+  const sm = (a, b, x) => { const t = clamp((x - a) / (b - a)); return t * t * (3 - 2 * t); }, lerp = (a, b, t) => a + (b - a) * t;
+  const REDUCE = matchMedia("(prefers-reduced-motion: reduce)").matches, JUMP = new URLSearchParams(location.search).get("jump");
+  if (JUMP !== null) history.scrollRestoration = "manual";
+  const HAS = typeof gsap !== "undefined" && typeof ScrollTrigger !== "undefined";
+
+  // ora e data reali di chi guarda
+  const now = new Date(), hm = now.getHours() + ":" + String(now.getMinutes()).padStart(2, "0");
+  const day = now.toLocaleDateString("it-IT", { weekday: "long", day: "numeric", month: "long" }), Day = day[0].toUpperCase() + day.slice(1);
+  $("ltime").textContent = hm; $("sbt").textContent = hm; $("ldate").textContent = Day; $("adate").textContent = Day;
+
+  const S = [0, 1, 2, 3, 4].map(i => $("s" + i)), rows = [...document.querySelectorAll(".row")], beats = [...document.querySelectorAll(".beat")];
+  const GR = ["A", "S", "S", "A", "S"], LET = ["E", "D", "C", "B", "A", "S"];
+  let lastRep = -1;
+  function render(p, t) {
+    // il telefono: sdraiato e spento, poi si alza verso di te e la camera si avvicina
+    const up = sm(.03, .17, p), close = sm(.78, .9, p), swing = Math.sin(p * Math.PI * 3) * 6 * (1 - close) * up;
+    const rx = lerp(62, 0, up), ty = lerp(14, 0, up), sc = lerp(.86, 1, up) * lerp(1, .84, close);
+    $("pw").style.transform = `translate3d(0,${ty}vh,0) rotateX(${rx}deg) rotateY(${swing}deg) scale(${sc})`;
+    const lit = sm(.02, .06, p);
+    $("screen").style.filter = `brightness(${.15 + .85 * lit})`;
+    const gold = sm(.66, .72, p);
+    $("glow").style.opacity = .35 + .65 * lit;
+    $("glow").style.background = gold > .01 ? `radial-gradient(closest-side,rgba(255,226,122,${.24 * gold + .05}),rgba(47,123,255,${.08 * (1 - gold)}) 45%,transparent 70%)` : "";
+    $("floor").style.opacity = .6 * (1 - up);
+    // schermate
+    const vis = [1 - sm(.17, .2, p), sm(.17, .2, p) * (1 - sm(.38, .41, p)), sm(.38, .41, p) * (1 - sm(.61, .64, p)), sm(.61, .64, p) * (1 - sm(.79, .82, p)), sm(.79, .82, p)];
+    S.forEach((s, i) => s.style.opacity = vis[i]);
+    // notifica
+    const nf = sm(.06, .12, p); $("notif").style.opacity = nf; $("notif").style.transform = `translateY(${(1 - nf) * -1.5}em) scale(${.96 + .04 * nf})`;
+    // missione: righe che si compongono, poi spunte e anello
+    rows.forEach((r, i) => { const a = sm(.2 + i * .025, .24 + i * .025, p); r.style.opacity = a; r.style.transform = `translateX(${(1 - a) * 1}em)`; r.classList.toggle("done", p > .3 + i * .018); });
+    const done = rows.filter(r => r.classList.contains("done")).length; $("qn").textContent = done + "/4"; $("qring").style.setProperty("--p", done / 4);
+    // fotocamera: 5 ripetizioni con profondità e voto
+    const cq = clamp((p - .41) / .19), reps = cq * 5, fr = reps % 1, depth = p < .41 || p > .6 ? 0 : (fr < .55 ? sm(0, .55, fr) : 1 - sm(.55, 1, fr));
+    $("dep").style.height = (depth * 100) + "%";
+    const rep = p >= .6 ? 5 : Math.floor(reps);
+    if (rep !== lastRep) { lastRep = rep; $("cn").textContent = rep; $("cg").textContent = rep ? GR[rep - 1] : "–"; $("cg").style.color = rep && GR[rep - 1] === "A" ? "var(--ok)" : "var(--gold)";
+      $("cmsg").textContent = rep ? (GR[rep - 1] === "S" ? "Ripetizione perfetta" : "Ripetizione valida") : "Scendi fino alle cosce parallele"; }
+    const pop = rep > 0 && p < .6 ? 1 - clamp(fr / .35) : 0; $("big").textContent = rep ? GR[rep - 1] : ""; $("big").style.opacity = pop; $("big").style.color = rep && GR[rep - 1] === "A" ? "var(--ok)" : "var(--gold)"; $("big").style.transform = `scale(${1.4 - .4 * (1 - pop)})`;
+    // level up
+    const lp = sm(.64, .74, p); $("gring").style.setProperty("--p", lp); $("lvn").textContent = lp > .98 ? "2" : "1";
+    // rango: le lettere girano e si fermano sul punto interrogativo
+    const spin = clamp((p - .82) / .08); $("rl").textContent = spin >= 1 ? "?" : LET[Math.floor((spin * 25 + t / 80) % 6)];
+    // testi
+    beats.forEach(b => { const i = +b.dataset.in, pk = +b.dataset.peak, o = +b.dataset.out; let a = 0;
+      if (p >= i && p <= o) a = p < pk ? (p - i) / Math.max(1e-4, pk - i) : o > 1.5 ? 1 : 1 - (p - pk) / Math.max(1e-4, o - pk);
+      b.style.opacity = a; b.style.transform = `translateY(${(1 - a) * 16}px)`; b.style.pointerEvents = a > .6 && b.querySelector(".ctas") ? "auto" : "none"; });
+    // nel finale il telefono scende un poco per lasciare spazio al testo
+    $("pw").style.top = (60 - 15 * close) + "%";
+    $("fade").style.opacity = sm(.95, 1, p);
+    const ch = [[0, "01 · Notifica"], [.17, "02 · Missione"], [.38, "03 · Fotocamera"], [.61, "04 · Level up"], [.79, "05 · Rango"]];
+    let n = ch[0][1]; for (const [s, l] of ch) if (p >= s) n = l; $("chap").textContent = n; $("bar").style.width = (p * 100) + "%";
+    $("readout").style.opacity = p > .995 ? 0 : 1;
+    $("hdr").classList.toggle("solid", scrollY > innerHeight * 6.3);
+  }
+
+  let target = 0, cur = 0;
+  if (HAS) {
+    gsap.registerPlugin(ScrollTrigger);
+    if (!REDUCE && JUMP === null && typeof Lenis !== "undefined") { const lenis = new Lenis({ lerp: .09, smoothWheel: true }); lenis.on("scroll", ScrollTrigger.update); gsap.ticker.add(t => lenis.raf(t * 1000)); gsap.ticker.lagSmoothing(0); }
+    ScrollTrigger.create({ trigger: "#film", start: "top top", end: () => "+=" + innerHeight * 6, pin: true, scrub: true, onUpdate: s => { target = s.progress; } });
+    gsap.utils.toArray(".reveal").forEach(el => gsap.to(el, { opacity: 1, y: 0, duration: .8, ease: "power3.out", scrollTrigger: { trigger: el, start: "top 88%", once: true } }));
+    gsap.to("#marq", { xPercent: -50, repeat: -1, duration: 38, ease: "none" });
+    gsap.ticker.add(() => { cur += (target - cur) * (REDUCE ? 1 : .14); render(cur, performance.now()); });
+  } else { target = cur = .9; document.querySelectorAll(".reveal").forEach(el => { el.style.opacity = 1; el.style.transform = "none"; }); render(cur, 0); }
+
+  addEventListener("load", () => {
+    if (JUMP !== null) { scrollTo(0, +JUMP || 0); if (HAS) { ScrollTrigger.refresh(); ScrollTrigger.update(); } cur = target; render(cur, 0); document.querySelectorAll(".reveal").forEach(el => { el.style.opacity = 1; el.style.transform = "none"; }); }
+    requestAnimationFrame(() => { window.__ready = true; });
+  });
+})();
+</script>
+</body>
+</html>

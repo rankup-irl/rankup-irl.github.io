@@ -442,7 +442,7 @@ function rowsHtml(rows, kind) {
   }).join("");
 }
 // ---------- HOME ----------
-let homeOpen = true, homeIv = 0;
+let homeOpen = !/[?&]start/.test(location.search), homeIv = 0;   // ?start: arriva dalla pagina film, salta la presentazione
 function showHome(on) {
   const was = !$("home").classList.contains("hide");
   $("home").classList.toggle("hide", !on); document.querySelector(".app").classList.toggle("hide", on);
